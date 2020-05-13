@@ -1,6 +1,18 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import re
+def remove_hashtags(string):
+    return re.sub(r"\#\S+", "", string)
+
+def remove_tagged_users(string):
+    return re.sub(r"\@\S+", "", string)
+
+def remove_line_breaks(string):
+     return re.sub(r"\n", " ", string)
+    
+def clean_whitespace(string):
+     return re.sub(r"\s+", " ", string)
 
 def define_axis_style(ax, title, x_label, y_label, legend=False):
     ax.set_title(title, fontsize=18)
