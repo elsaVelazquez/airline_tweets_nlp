@@ -12,11 +12,18 @@ import imageio
 import glob
 
 def create_3d_scatter(ax, x, y, z, colors, title):
+    '''
+    Create 3D scatter okit with given X, Y, and Z arrays
+    '''
     ax.scatter(x, y, z, c=colors, alpha=1, s=.7)
     ax.set_title(title, fontdict = {'fontsize': 16})
     return ax
 
 def create_3d_scatter_frames(ax, min_angle, max_angle, num_frames, out_directory):
+    '''
+    Create frames of 3D scatter plot for use in an animation
+    Will create num_frames, rotating between min_angle and max_angle
+    '''
     angles = np.linspace(min_angle, max_angle, num_frames) 
     plt.tight_layout()
     for i, angle in enumerate(angles):
@@ -27,11 +34,11 @@ def create_3d_scatter_frames(ax, min_angle, max_angle, num_frames, out_directory
 def create_gif(folder_of_pngs, file_path_out, sec_per_frame=0.5, remove_source_files=False):
     """
     Create gif from a folder of PNG files
-    Keyword arguments:
-    folder_of_pngs -- path to folder of png images with files named in ascending order (ex. 001.png, 002.png, etc.)
-    file_path_out -- path to output the resulting GIF
-    frame_rate -- number of seconds to display each frame. Defaults to 0.5
-    remove_source_files -- if True, deletes the frames used to create the GIF
+
+    folder_of_pngs : path to folder of png images with files named in ascending order (ex. 001.png, 002.png, etc.)
+    file_path_out : path to output the resulting GIF
+    frame_rate : number of seconds to display each frame. Defaults to 0.5
+    remove_source_files : if True, deletes the frames used to create the GIF
     """
     images = []
     img_paths = sorted(glob.glob(os.path.join(folder_of_pngs, "*.png")))
@@ -43,8 +50,81 @@ def create_gif(folder_of_pngs, file_path_out, sec_per_frame=0.5, remove_source_f
             os.remove(img_path)
     return
 
-def create_pca_animation(csvpath, text_col, title, framepath, outfilepath):
+def create_pca_animation(csv_path, text_col, target_col, title, additional_stop_words, color_dict, frame_path, outfilepath):
+    '''
+    Create animation of rotating 3D scatter plot comprised of PCA down to three principal components for a given data
+    Intended for NLP exploration
+
+    csv_path : Data path to CSV
+    text_col : Name of text column on which to vectorize and form principal components
+    target_col : Name of target column
+    additional_stop_words : Any stop words to be included in addition to SKLearn defaults
+    color_dict : Dictionary with the targets as keys and the desired colors as values
+    frame_path : Location to create 'pca_anim' directory to temporarily store frames needed to create animation
+    outfilepath : Path of output GIF animation
+    '''
     plt.style.use("seaborn")
+
+    # combine stop words with SKLearn default stop words
+    sw = create_stop_words(additional_stop_words)
+
+    # read data
+    data = pd.read_csv(csv_path)
+    X_raw = data[text_col]
+
+    # Transform using CountVectorizer and TF-IDF matrix
+    count_vect = CountVectorizer(
+                            tokenizer=None,
+                            stop_words=sw,
+                            analyzer='word',
+                            min_df=100, # words must appear 100 times to be considered
+                            max_features=None
+                        )
+
+    tfidf_transformer = TfidfTransformer(use_idf=True)
+
+    X_vec = count_vect.fit_transform(X_raw)
+    X_tfidf = tfidf_transformer.fit_transform(X_vec)
+
+    # Run PCA w/ 3 components (so it can be visualized in 3d space)
+    pca = PCA(n_components=3) 
+    X_pca = pca.fit_transform(X_tfidf.toarray())
+
+    # define colors for scatter plot
+    colors = [color_dict[y] for y in data[target_col]]
+
+    fig = plt.figure(figsize=(10,6), dpi=80)
+    ax = plt.axes(projection='3d')
+
+    # create scatter plot
+    create_3d_scatter(
+                    ax = ax,
+                    x = X_pca[:, 0],
+                    y = X_pca[:, 1],
+                    z = X_pca[:, 2],
+                    colors=colors,
+                    title=title
+                )
+
+    # Create animation directory if doesn't exist to temporarily store frames
+    anim_dir = f"{frame_path}/pca_anim/"
+    if not os.path.exists(anim_dir):
+        os.mkdir(anim_dir)
+
+    # create frames
+    create_3d_scatter_frames(
+                        ax = ax,
+                        min_angle = 0,
+                        max_angle = 360,
+                        num_frames = 200,
+                        out_directory = anim_dir
+                    )
+    # combine frames to gif
+    create_gif(anim_dir, outfilepath, sec_per_frame=0.05, remove_source_files=True)
+    return
+
+if __name__ == '__main__':
+
     more_sw = [
         "im",
         "fly",
@@ -54,76 +134,30 @@ def create_pca_animation(csvpath, text_col, title, framepath, outfilepath):
         "got"
     ]
 
-    sw = create_stop_words(more_sw)
-
-    data = pd.read_csv(csvpath)
-    X_raw = data[text_col]
-
-    count_vect = CountVectorizer(
-                            tokenizer=None,
-                            stop_words=sw,
-                            analyzer='word',
-                            min_df=100, # words must appear 100 times to be considered
-                            max_features=None
-    )
-
-    tfidf_transformer = TfidfTransformer(use_idf=True)
-
-    X_vec = count_vect.fit_transform(X_raw)
-    X_tfidf = tfidf_transformer.fit_transform(X_vec)
-
-    pca = PCA(n_components=3) 
-    X_pca = pca.fit_transform(X_tfidf.toarray())
-
-    # define scatter plot colors
     color_dict = {
         "positive": "seagreen",
         "negative": "firebrick",
         "neutral": "darkgoldenrod"
     }
 
-    colors = [color_dict[y] for y in data['airline_sentiment']]
-
-    fig = plt.figure(figsize=(10,6), dpi=80)
-    ax = plt.axes(projection='3d')
-
-    create_3d_scatter(
-                    ax = ax,
-                    x = X_pca[:, 0],
-                    y = X_pca[:, 1],
-                    z = X_pca[:, 2],
-                    colors=colors,
-                    title=title
-    )
-
-    # Create animation directory if doesn't exist
-    anim_dir = f"{framepath}/pca_anim/"
-    if not os.path.exists(anim_dir):
-        os.mkdir(anim_dir)
-
-    create_3d_scatter_frames(
-                        ax = ax,
-                        min_angle = 0,
-                        max_angle = 360,
-                        num_frames = 200,
-                        out_directory = anim_dir
-    )
-
-    create_gif(anim_dir, outfilepath, sec_per_frame=0.05, remove_source_files=True)
-    return
-
-if __name__ == '__main__':
     create_pca_animation(
-            csvpath = "data/Clean_T_Tweets.csv",
+            csv_path = "data/Clean_T_Tweets.csv",
             text_col = "text",
+            target_col = "airline_sentiment",
             title = "Tweet Sentiment With 3 Principal Components",
-            framepath = "images",
+            additional_stop_words = more_sw,
+            color_dict = color_dict,
+            frame_path = "images",
             outfilepath = "images/pca_animation.gif"
         )
+
     create_pca_animation(
-            csvpath = "data/Clean_T_Tweets_wo_Users.csv",
+            csv_path = "data/Clean_T_Tweets_wo_Users.csv",
             text_col = "text",
+            target_col = "airline_sentiment",
             title = "Tweet Sentiment With 3 Principal Components (Standardized Tagged Users)",
-            framepath = "images",
+            additional_stop_words = more_sw,
+            color_dict = color_dict,
+            frame_path = "images",
             outfilepath = "images/pca_animation_no_users.gif"
         )

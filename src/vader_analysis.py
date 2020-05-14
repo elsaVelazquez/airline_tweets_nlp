@@ -5,18 +5,24 @@ from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_sc
 import re
 from helpers import clean_df_column, print_model_metrics
 
-
 def demo_vader(sentence):
+    '''
+    Demo VADER sentiment analysis
+    '''
     analyser = SentimentIntensityAnalyzer()
     score = analyser.polarity_scores(sentence)
     print("{:-<40} {}".format(sentence, str(score)))
 
 def vader_predict_proba(X):
+    '''
+    Predict positive, neutral, negative sentiment probabilities for an array
+    '''
     analyser = SentimentIntensityAnalyzer()
     y_preds = []
     for text in X:
         score = analyser.polarity_scores(text)
         del score['compound']
+        # rename keys to line up with target names
         score["negative"] = score.pop("neg")
         score["positive"] = score.pop("pos")
         score["neutral"] = score.pop("neu")
@@ -24,6 +30,7 @@ def vader_predict_proba(X):
     return y_preds
 
 def vader_predict(X):
+    # predict using compound score
     analyser = SentimentIntensityAnalyzer()
     y_preds = []
     threshold = 0.001
@@ -41,14 +48,16 @@ def vader_predict(X):
 if __name__ == '__main__':
     nltk.download('vader_lexicon')
 
+    # Load data
     data = pd.read_csv("data/Clean_T_Tweets_wo_Users.csv")
 
+    # Clean columns
     data = clean_df_column(data, 'text')
 
+    # Make predictions
     y_preds = vader_predict(data['text'])
 
     y_test = data['airline_sentiment']
 
+    # Evaluate
     print_model_metrics(y_test, y_preds)
-    
-    demo_vader("I hate you!")

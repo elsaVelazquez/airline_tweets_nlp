@@ -12,7 +12,7 @@ sw = [
     'my', 'is', 'in', 'it', 'no', 'of', 'not', 'your', 'me', 'hour', 'have', 'wa', 'that', 'to', 'the', 'i', 'you', 'u', 'on', 'a', 'do', 'for', 'at', 'so', 'and', 'be', 'now', 'with', 'just', 'get', 'our', 'we', 'an', 'are', 'this', 'but', 'will', 'fleek', 'im', 'if', 'it', 'u', 'or'
 ]
 
-# lemmatiz
+# additional lemmatization terms
 additional_lemmatize_dict = {
     "cancelled": "cancel",
     "cancellation": "cancel",
@@ -26,6 +26,9 @@ additional_lemmatize_dict = {
 }
 
 def print_model_metrics(y_test, y_preds):
+    '''
+    Print classification matrix and confusion matrix for a given prediction
+    '''
     class_rept_dict = classification_report(y_test, y_preds, output_dict=True)
     class_rept_df = pd.DataFrame(class_rept_dict).transpose()
     print(class_rept_df.to_markdown())
@@ -39,24 +42,41 @@ def print_model_metrics(y_test, y_preds):
     return
 
 def create_stop_words(additional_stopwords=None):
+    '''
+    Combine SKLearn stop words with addition list (optional)
+    '''
     if additional_stopwords:
         return sklearn.feature_extraction.text.ENGLISH_STOP_WORDS.union(additional_stopwords)
     else:
         return sklearn.feature_extraction.text.ENGLISH_STOP_WORDS
 
 def remove_punctuation(string, punc=punctuation):
-    # remove given punctuation marks from a string
+    '''
+    Remove all punctuation from a string
+    '''
     for character in punc:
         string = string.replace(character,'')
     return string
 
 def remove_hashtags(string, keep_text=False):
+    '''
+    Remove hashtags from a string
+
+    if keep_text == True: remove the '#' symbol, not the text itself
+    '''
     if keep_text:
         return re.sub(r"\#([^\s\#]+)", r"\1", string) 
     else:
         return re.sub(r"\#\S+", "", string)
 
 def remove_tagged_users(string):
+    '''
+    remove strings beginning with '@' symbols
+
+    ex.
+    remove_tagged_users("I hate @southwestairlines")
+    >>> "I hate "
+    '''
     return re.sub(r"\@\S+", "", string)
 
 def remove_line_breaks(string):
@@ -66,6 +86,9 @@ def clean_whitespace(string):
      return re.sub(r"\s+", " ", string.strip())
 
 def clean_df_column(df, col):
+    '''
+    Apply series of helper scripts to clean a text based column in a DataFrame
+    '''
     df[col] = df[col].apply(remove_hashtags, keep_text=True)
     df[col] = df[col].apply(remove_tagged_users)
     df[col] = df[col].apply(remove_line_breaks)
@@ -74,6 +97,9 @@ def clean_df_column(df, col):
     return df
 
 def define_axis_style(ax, title, x_label, y_label, legend=False):
+    '''
+    Function to define labels/title font sizes for consistency across plots
+    '''
     ax.set_title(title, fontsize=18)
     ax.set_ylabel(y_label, fontsize=16)
     ax.set_xlabel(x_label, fontsize=16)
@@ -83,6 +109,15 @@ def define_axis_style(ax, title, x_label, y_label, legend=False):
     return
 
 def plot_feature_importances(ax, feat_importances, feat_std_deviations, feat_names, n_features, outfilename):
+    '''
+    Plot feature importances for an NLP model
+
+    feat_importances : Array of feature importances
+    feat_std_deviations : Standard deviations of feature importances (intended for RandomForest) **OPTIONAL
+    feat_names : Array of feature names
+    n_features : Number of top features to include in plot
+    outfilename : Path to save file
+    '''
     feat_importances = np.array(feat_importances)
     feat_names = np.array(feat_names)
     sort_idx = feat_importances.argsort()[::-1][:n_features]

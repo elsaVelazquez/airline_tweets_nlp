@@ -17,6 +17,10 @@ from joblib import dump, load
 
 
 def wordnet_lemmetize_tokenize(text):
+    '''
+    Custom tokenizer object that applies WordNetLemmatizer
+    Intended to be passed into CountVectorizer as a tokenizer object
+    '''
     lemmatizer = WordNetLemmatizer()
     words = remove_punctuation(text).split()
     tokens = []
@@ -32,53 +36,56 @@ def wordnet_lemmetize_tokenize(text):
 
 if __name__ == '__main__':
     
+    # load data
     data = pd.read_csv("data/Clean_T_Tweets_wo_Users.csv", index_col=0)
 
     X = data['text']
     y = data['airline_sentiment']
+
+    # split into train/test
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=10)
 
-    param_grid = {
-        'vect__min_df': [1, 12, 24, 48, 96, 1000, 5000, 10000], 
-        'vect__max_df': [None, 0.1, 0.2, 0.3, 0.4, 0.5], 
-        'model__alpha': [0.1, 0.2, 0.5, 1, 10, 100, 1000], 
-        'vect__max_features': [None, 10, 100, 1000, 10000] 
-    }  
-    # {'model__alpha': 0.1, 'vect__max_df': 0.2, 'vect__max_features': 1000, 'vect__min_df': 1}
-
-
+    # Initialize count vectorizer
     count_vect = CountVectorizer(tokenizer=wordnet_lemmetize_tokenize,
                                 analyzer='word', min_df=1, max_df=0.2, stop_words=['wa', 'u'],
                                 max_features=1000)
 
+    # Initialize TF-IDF transformer
     tfidf_transformer = TfidfTransformer(use_idf=True)
 
+    # Initialize MultinomialNB
     nb_model = MultinomialNB(alpha=0.1, fit_prior=True)
 
+    # Assemble pipeline
     nb_pipeline = Pipeline([
                             ('vect', count_vect),
                             ('tfidf', tfidf_transformer),
                             ('model', nb_model),
                             ])
 
+    # Fit, predict, and print performance metrics
     nb_pipeline.fit(X_train, y_train)
     y_preds = nb_pipeline.predict(X_test)
     print_model_metrics(y_test, y_preds)
 
+    # Fit on total training data and export
     nb_pipeline.fit(X, y)
     dump(nb_pipeline, 'models/naivebayes.joblib') 
 
+    # Print and plot feature importances for each class
     target_names = np.unique(y)
     n=15 # number of top words to include
     feature_words = count_vect.get_feature_names()
     for cat in range(len(np.unique(y))):
         print(f"\nTarget: {cat}, name: {target_names[cat]}")
-        log_prob = nb_model.feature_log_prob_[cat]
-        i_topn = np.argsort(log_prob)[::-1][:n]
-        features_topn = [feature_words[i] for i in i_topn]
-        print(f"Top {n} tokens: ", features_topn)
+        log_probs= nb_model.feature_log_prob_[cat]
+        top_idx = np.argsort(log_probs)[::-1][:n]
+        features_top_n = [feature_words[i] for i in top_idx]
+        print(f"Top {n} tokens: ", features_top_n)
         plt.style.use('seaborn')
         fig, ax = plt.subplots(1, 1, figsize=(10,6))
+
+        # Make it pretty/consistent
         define_axis_style(ax = ax, title=f'Niave Bayes Top {n} Features: {target_names[cat]}', x_label=None, y_label="Log Probability")
         plot_feature_importances(
                                 ax = ax,
