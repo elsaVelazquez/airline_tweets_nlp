@@ -1,8 +1,9 @@
 *.pyc
 *.csv
 .ipynb_checkpoints
-./notebooks
+/notebooks
 /images/pca_anim
 __pycache__
 /models/*.joblib
 *.ipynb
+.DS_Store
