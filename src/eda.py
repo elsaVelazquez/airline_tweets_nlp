@@ -6,35 +6,7 @@ from PIL import Image
 from wordcloud import WordCloud, ImageColorGenerator
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-
-def remove_hashtags(string):
-    return re.sub(r"\#\S+", "", string)
-
-def remove_tagged_users(string):
-    return re.sub(r"\@\S+", "", string)
-
-def remove_line_breaks(string):
-     return re.sub(r"\n", " ", string)
-    
-def clean_whitespace(string):
-     return re.sub(r"\s+", " ", string)
-
-def clean_df_column(df, col):
-    df[col] = df[col].apply(remove_hashtags)
-    df[col] = df[col].apply(remove_tagged_users)
-    df[col] = df[col].apply(remove_line_breaks)
-    df[col] = df[col].apply(clean_whitespace)
-    df[col] = df[col].str.strip()
-    return df
-
-def define_axis_style(ax, title, x_label, y_label, legend=False):
-    ax.set_title(title, fontsize=18)
-    ax.set_ylabel(y_label, fontsize=16)
-    ax.set_xlabel(x_label, fontsize=16)
-    ax.tick_params(labelsize=14)
-    if legend:
-        ax.legend(fontsize=16)
-    return
+from helpers import clean_df_column, define_axis_style, sw
 
 def group_plot_pos_neg_dist(df, ax, title, groupby_col, outfilepath=None):
     x_vals = np.array(df[groupby_col].unique())
@@ -114,16 +86,12 @@ if __name__ == '__main__':
 
 
     # create wordclouds
-    clean_data = pd.read_csv("data/Clean_Tweets.csv")
+    clean_data = pd.read_csv("data/Clean_T_Tweets.csv")
 
     clean_data = clean_df_column(clean_data, 'text')
 
-    clean_text_pos = clean_data[clean_data['airline_sentiment'] == 'positive']['text']
-    clean_text_neg = clean_data[clean_data['airline_sentiment'] == 'negative']['text']
-    clean_text_neu = clean_data[clean_data['airline_sentiment'] == 'neutral']['text']
+    stop_words = sw + ["amp", "flight", "flights", "fly", "airline", "airport", "just"]
 
-    stop_words = ENGLISH_STOP_WORDS.union(["amp", "flight", "flights", "fly", "airline", "airport", "just", "airlineaccount", "otherairlineaccount", "useraccount"])
-
-    create_word_cloud(text=" ".join(clean_text_pos), additional_stop_words=stop_words, outfilepath="images/pos_wordcloud.png")
-    create_word_cloud(text=" ".join(clean_text_neg), additional_stop_words=stop_words, outfilepath="images/neg_wordcloud.png")
-    create_word_cloud(text=" ".join(clean_text_neu), additional_stop_words=stop_words, outfilepath="images/neu_wordcloud.png")
+    for sentiment in np.unique(clean_data['airline_sentiment']):
+        clean_text_sent = clean_data[clean_data['airline_sentiment'] == sentiment]['text']
+        create_word_cloud(text=" ".join(clean_text_sent), additional_stop_words=stop_words, outfilepath=f"images/{sentiment}_wordcloud.png")
