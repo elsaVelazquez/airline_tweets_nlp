@@ -22,11 +22,14 @@ if __name__ == '__main__':
         "got"
     ]
 
+    # add a few words to SKLearn stop words list
     sw = create_stop_words(more_sw)
 
-    data = pd.read_csv("data/Tweets.csv")
+    # load clean data
+    data = pd.read_csv("data/Clean_T_Tweets_wo_Users.csv")
     X_raw = data['text']
 
+    # Fit/transorom CountVectorizer and TF-IDF matrix
     count_vect = CountVectorizer(tokenizer=None, stop_words=sw,
                                 analyzer='word', min_df=10,
                                 max_features=None)
@@ -36,12 +39,11 @@ if __name__ == '__main__':
     X_vec = count_vect.fit_transform(X_raw)
     X_tfidf = tfidf_transformer.fit_transform(X_vec)
 
-    # scree plot
-    # don't define n features
+    # Create PCA object with max features
     pca = PCA()
     X_pca = pca.fit_transform(X_tfidf.toarray())
 
-    # scree plot
+    # Create SCREE plot to determine appropriate number of principal components
     cum_variance = np.cumsum(pca.explained_variance_)
     total_variance = np.sum(pca.explained_variance_)
     prop_var_expl = cum_variance/total_variance
@@ -50,7 +52,7 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(figsize=(10,6))
 
     ax.plot(prop_var_expl, color='blue', linewidth=2, label='Explained variance')
-    ax.axhline(0.9, label=r'90% Variance Explained', linestyle='--', color="grey", linewidth=1)
+    ax.axhline(0.8, label=r'80% Variance Explained', linestyle='--', color="grey", linewidth=1)
     define_axis_style(
                     ax=ax,
                     title="Proportion of Explained Variance",

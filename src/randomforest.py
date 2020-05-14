@@ -6,23 +6,20 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.pipeline import Pipeline
-
 from joblib import dump, load
-
 from helpers import sw, define_axis_style, plot_feature_importances, print_model_metrics
 
 if __name__ == '__main__':
+
+    # Read and split data into training and test
     data = pd.read_csv("data/Clean_T_Tweets_wo_Users.csv", index_col=0)
 
     X = data['text']
     y = data['airline_sentiment']
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=10)
 
-    n_est_arr = np.arange(1, 1001, 50)
-
+    # Initialize Count Vectorizer and Random Forest pipeline
     count_vect = CountVectorizer(stop_words=sw, analyzer='word')
-    X_train_vec = count_vect.fit_transform(X_train)
-    X_test_vec = count_vect.transform(X_test)
 
     rf = RandomForestClassifier(
                             random_state=42,
@@ -41,10 +38,13 @@ if __name__ == '__main__':
 
     rf_pipeline.fit(X_train, y_train)
 
+    # generate predictions
     y_preds = rf_pipeline.predict(X_test)
 
     plt.style.use('seaborn')
     fig, ax  = plt.subplots(1, 1, figsize=(10,6))
+
+    # Make it pretty/consistent
     define_axis_style(
                     ax=ax,
                     title="Random Forest Estimators vs. Macro F1 Score",
@@ -52,12 +52,15 @@ if __name__ == '__main__':
                     y_label="Macro F1 Score on Unseen Data",
                     legend=False
                 )
-
+    
+    # Evaluate model
     print_model_metrics(y_test, y_preds)
 
+    # Fit on total training data and dump to /models
     rf_pipeline.fit(X, y)
     dump(rf_pipeline, 'models/randomforest.joblib') 
 
+    # Plot feature importances
     plt.style.use("seaborn")
 
     fig, ax = plt.subplots(1, 1, figsize=(10,6))
