@@ -74,6 +74,9 @@ def remove_users_of_interest(df):
                         df.loc[row_idx, 'text'] = df.loc[row_idx, 'text'].replace(tagged_user, "otherairlineaccount")
         else:
             df.loc[row_idx, 'text'] = df.loc[row_idx, 'text'].replace(tagged_user, "useraccount")
+    return df
 
 if __name__ == '__main__':
-    pass
+    df = pd.read_csv("data/Clean_T_Tweets.csv")
+    df = remove_users_of_interest(df)
+    df.to_csv("data/Clean_T_Tweets_wo_Users.csv")

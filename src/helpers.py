@@ -3,12 +3,17 @@ import nltk
 from string import punctuation
 import numpy as np
 import re
+import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report, confusion_matrix
+import pandas as pd
 
-
+# stop words
 sw = [
-    'my', 'is', 'in', 'it', 'no', 'of', 'not', 'your', 'me', 'hour', 'have', 'wa', 'that', 'to', 'the', 'i', 'you', 'u', 'on', 'a', 'do', 'for', 'at', 'so', 'and', 'be', 'now', 'with', 'just', 'get', 'our', 'we', 'an', 'are', 'this', 'but', 'will', 'fleek', 'im'
+    'my', 'is', 'in', 'it', 'no', 'of', 'not', 'your', 'me', 'hour', 'have', 'wa', 'that', 'to', 'the', 'i', 'you', 'u', 'on', 'a', 'do', 'for', 'at', 'so', 'and', 'be', 'now', 'with', 'just', 'get', 'our', 'we', 'an', 'are', 'this', 'but', 'will', 'fleek', 'im', 'if', 'it', 'u', 'or'
 ]
-additional_lemmatizate_dict = {
+
+# lemmatiz
+additional_lemmatize_dict = {
     "cancelled": "cancel",
     "cancellation": "cancel",
     "cancellations": "cancel",
@@ -19,6 +24,19 @@ additional_lemmatizate_dict = {
     "luggage": "bag",
     "dms": "dm"
 }
+
+def print_model_metrics(y_test, y_preds):
+    class_rept_dict = classification_report(y_test, y_preds, output_dict=True)
+    class_rept_df = pd.DataFrame(class_rept_dict).transpose()
+    print(class_rept_df.to_markdown())
+    cmtx = pd.DataFrame(
+        confusion_matrix(y_test, y_preds, labels = ['negative', 'neutral', 'positive']), 
+        index=['true:negative', 'true:neutral', 'true:positive'], 
+        columns=['pred:negative', 'pred:neutral', 'pred:positive']
+    )
+    print("\n")
+    print(cmtx.to_markdown())
+    return
 
 def create_stop_words(additional_stopwords=None):
     if additional_stopwords:
@@ -48,7 +66,7 @@ def clean_whitespace(string):
      return re.sub(r"\s+", " ", string.strip())
 
 def clean_df_column(df, col):
-    df[col] = df[col].apply(remove_hashtags)
+    df[col] = df[col].apply(remove_hashtags, keep_text=True)
     df[col] = df[col].apply(remove_tagged_users)
     df[col] = df[col].apply(remove_line_breaks)
     df[col] = df[col].apply(clean_whitespace)
@@ -62,4 +80,19 @@ def define_axis_style(ax, title, x_label, y_label, legend=False):
     ax.tick_params(labelsize=14)
     if legend:
         ax.legend(fontsize=16)
+    return
+
+def plot_feature_importances(ax, feat_importances, feat_std_deviations, feat_names, n_features, outfilename):
+    feat_importances = np.array(feat_importances)
+    feat_names = np.array(feat_names)
+    sort_idx = feat_importances.argsort()[::-1][:n_features]
+    if len(feat_std_deviations) > 0:
+        feat_std_deviations = feat_std_deviations[sort_idx]
+    else:
+        feat_std_deviations = None
+    ax.bar(feat_names[sort_idx], feat_importances[sort_idx], color='slateblue', edgecolor='black', linewidth=1, yerr=feat_std_deviations)
+    ax.set_xticklabels(feat_names[sort_idx], rotation=40, ha='right')
+    plt.tight_layout()
+    plt.savefig(outfilename)
+    plt.close('all')
     return

@@ -4,6 +4,7 @@ from itertools import chain
 from helpers import remove_hashtags, clean_whitespace
 
 def data_cleaning(infile, outfile):
+    # Load data
     df_raw = pd.read_csv(infile)
     df_clean = df_raw.copy()
 
@@ -45,4 +46,3 @@ def data_cleaning(infile, outfile):
 
 if __name__ == "__main__":
     data_cleaning("data/T_Tweets.csv", "data/Clean_T_Tweets.csv")
-    data_cleaning("data/Holdout_Tweets.csv", "data/Clean_Holdout_Tweets.csv")

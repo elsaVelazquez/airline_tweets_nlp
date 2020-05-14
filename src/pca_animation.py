@@ -21,7 +21,7 @@ def create_3d_scatter_frames(ax, min_angle, max_angle, num_frames, out_directory
     plt.tight_layout()
     for i, angle in enumerate(angles):
         ax.view_init(30, angle)
-        plt.savefig(f"{anim_dir}{str(i).zfill(len(str(num_frames)))}.png")
+        plt.savefig(f"{out_directory}{str(i).zfill(len(str(num_frames)))}.png")
     return
 
 def create_gif(folder_of_pngs, file_path_out, sec_per_frame=0.5, remove_source_files=False):
@@ -43,9 +43,8 @@ def create_gif(folder_of_pngs, file_path_out, sec_per_frame=0.5, remove_source_f
             os.remove(img_path)
     return
 
-if __name__ == '__main__':
+def create_pca_animation(csvpath, text_col, title, framepath, outfilepath):
     plt.style.use("seaborn")
-
     more_sw = [
         "im",
         "fly",
@@ -57,8 +56,8 @@ if __name__ == '__main__':
 
     sw = create_stop_words(more_sw)
 
-    data = pd.read_csv("data/Tweets.csv")
-    X_raw = data['text']
+    data = pd.read_csv(csvpath)
+    X_raw = data[text_col]
 
     count_vect = CountVectorizer(
                             tokenizer=None,
@@ -78,9 +77,9 @@ if __name__ == '__main__':
 
     # define scatter plot colors
     color_dict = {
-        "positive": "green",
-        "negative": "red",
-        "neutral": "black"
+        "positive": "seagreen",
+        "negative": "firebrick",
+        "neutral": "darkgoldenrod"
     }
 
     colors = [color_dict[y] for y in data['airline_sentiment']]
@@ -94,11 +93,11 @@ if __name__ == '__main__':
                     y = X_pca[:, 1],
                     z = X_pca[:, 2],
                     colors=colors,
-                    title="Airline Sentiment with 3 Principal Components"
+                    title=title
     )
 
     # Create animation directory if doesn't exist
-    anim_dir = "images/pca_anim/"
+    anim_dir = f"{framepath}/pca_anim/"
     if not os.path.exists(anim_dir):
         os.mkdir(anim_dir)
 
@@ -110,4 +109,21 @@ if __name__ == '__main__':
                         out_directory = anim_dir
     )
 
-    create_gif(anim_dir, "images/pca_animation.gif", sec_per_frame=0.05, remove_source_files=True)
+    create_gif(anim_dir, outfilepath, sec_per_frame=0.05, remove_source_files=True)
+    return
+
+if __name__ == '__main__':
+    create_pca_animation(
+            csvpath = "data/Clean_T_Tweets.csv",
+            text_col = "text",
+            title = "Tweet Sentiment With 3 Principal Components",
+            framepath = "images",
+            outfilepath = "images/pca_animation.gif"
+        )
+    create_pca_animation(
+            csvpath = "data/Clean_T_Tweets_wo_Users.csv",
+            text_col = "text",
+            title = "Tweet Sentiment With 3 Principal Components (Standardized Tagged Users)",
+            framepath = "images",
+            outfilepath = "images/pca_animation_no_users.gif"
+        )
