@@ -1,0 +1,15 @@
+sklearn
+nltk
+matplotlib
+joblib
+numpy
+pandas
+re
+os
+imageio
+glob
+string
+itertools
+PIL
+wordcloud
+statistics
