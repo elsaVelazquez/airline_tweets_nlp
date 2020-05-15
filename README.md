@@ -191,9 +191,9 @@ Again, positive tweets are green, negative tweets are red, and neutral tweets ar
 ![PCA1](images/pca_animation.gif "PCA1") 
 ![PCA2](images/pca_animation_no_users.gif "PCA2")
 
-Although there is still a lot of overlap between the sentiment classes, it certainly looks better in the second animation. Essentially, the graph on the right was clustering simply based on the tagged airline, with little hope for finding structure aligning with the tweet sentiment.
+Although there is still a lot of overlap between the sentiment classes, it certainly looks better in the second animation. Essentially, the first analysis was forming clusters simply based on the tagged airline, with little hope for finding structure aligning with the tweet sentiment.
 
-It is worth noting that three principal components really only accounts for a small proportion of the variance seen in the data.
+It is worth noting that three principal components only accounts for a small proportion (< 5%) of the variance seen in the data.
 
 ![SCREE Plot](images/scree_plot.png "SCREE Plot")
 
