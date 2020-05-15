@@ -2,7 +2,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 
 if __name__ == '__main__':
-    
+
     # Split raw data to training and holdout sets
 
     data = pd.read_csv("data/Tweets.csv")

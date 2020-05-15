@@ -1,9 +1,9 @@
 import pandas as pd
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import nltk
-from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score, classification_report, confusion_matrix
 import re
 from helpers import clean_df_column, print_model_metrics
+
 
 def demo_vader(sentence):
     '''
@@ -13,9 +13,11 @@ def demo_vader(sentence):
     score = analyser.polarity_scores(sentence)
     print("{:-<40} {}".format(sentence, str(score)))
 
+
 class VaderAnalysis():
     def __init__(self):
         self.analyser = SentimentIntensityAnalyzer()
+
     def predict(self, X):
         y_preds = []
         threshold = 0.001
@@ -32,7 +34,8 @@ class VaderAnalysis():
 
     def predict_proba(self, X):
         '''
-        Predict positive, neutral, negative sentiment probabilities for an array
+        Predict positive, neutral, negative sentiment probabilities
+        X : array of text entries
         '''
         y_preds = []
         for text in X:
@@ -64,4 +67,3 @@ if __name__ == '__main__':
 
     # Evaluate
     print_model_metrics(y_test, y_preds)
-

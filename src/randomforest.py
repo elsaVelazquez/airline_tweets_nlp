@@ -1,7 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.model_selection import cross_val_score,train_test_split,GridSearchCV
+from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score, classification_report, confusion_matrix
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -32,9 +31,9 @@ if __name__ == '__main__':
                         )
 
     rf_pipeline = Pipeline([
-                            ('vect', count_vect),
-                            ('model', rf)
-                        ])
+                        ('vect', count_vect),
+                        ('model', rf)
+                    ])
 
     rf_pipeline.fit(X_train, y_train)
 
@@ -42,7 +41,7 @@ if __name__ == '__main__':
     y_preds = rf_pipeline.predict(X_test)
 
     plt.style.use('seaborn')
-    fig, ax  = plt.subplots(1, 1, figsize=(10,6))
+    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 
     # Make it pretty/consistent
     define_axis_style(
@@ -52,28 +51,33 @@ if __name__ == '__main__':
                     y_label="Macro F1 Score on Unseen Data",
                     legend=False
                 )
-    
+
     # Evaluate model
     print_model_metrics(y_test, y_preds)
 
     # Fit on total training data and dump to /models
     rf_pipeline.fit(X, y)
-    dump(rf_pipeline, 'models/randomforest.joblib') 
+    dump(rf_pipeline, 'models/randomforest.joblib')
 
     # Plot feature importances
     plt.style.use("seaborn")
 
-    fig, ax = plt.subplots(1, 1, figsize=(10,6))
+    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 
     std = np.std([tree.feature_importances_ for tree in rf.estimators_], axis=0)
-    
+
     n_features = 15
-    define_axis_style(ax=ax, title=f"Top {n_features} Feature Importances for Random Forest", x_label=None, y_label='Feature Importance')
+    define_axis_style(
+                    ax=ax,
+                    title=f"Top {n_features} Feature Importances for Random Forest",
+                    x_label=None,
+                    y_label='Feature Importance'
+                )
     plot_feature_importances(
-                            ax = ax,
-                            feat_importances = rf.feature_importances_,
-                            feat_std_deviations=std,
-                            feat_names = count_vect.get_feature_names(),
-                            n_features = n_features,
-                            outfilename = "images/rf_feat_importances.png"
-                        )
+                    ax=ax,
+                    feat_importances=rf.feature_importances_,
+                    feat_std_deviations=std,
+                    feat_names=count_vect.get_feature_names(),
+                    n_features=n_features,
+                    outfilename="images/rf_feat_importances.png"
+                )

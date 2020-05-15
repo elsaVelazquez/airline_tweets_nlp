@@ -9,7 +9,12 @@ import pandas as pd
 
 # stop words
 sw = [
-    'my', 'is', 'in', 'it', 'no', 'of', 'not', 'your', 'me', 'hour', 'have', 'wa', 'that', 'to', 'the', 'i', 'you', 'u', 'on', 'a', 'do', 'for', 'at', 'so', 'and', 'be', 'now', 'with', 'just', 'get', 'our', 'we', 'an', 'are', 'this', 'but', 'will', 'fleek', 'im', 'if', 'it', 'u', 'or'
+    'my', 'is', 'in', 'it', 'no', 'of', 'not',
+    'your', 'me', 'hour', 'have', 'wa', 'that',
+    'to', 'the', 'i', 'you', 'u', 'on', 'a', 'do',
+    'for', 'at', 'so', 'and', 'be', 'now', 'with',
+    'just', 'get', 'our', 'we', 'an', 'are', 'this',
+    'but', 'will', 'fleek', 'im', 'if', 'it', 'u', 'or'
 ]
 
 # additional lemmatization terms
@@ -25,6 +30,7 @@ additional_lemmatize_dict = {
     "dms": "dm"
 }
 
+
 def print_model_metrics(y_test, y_preds):
     '''
     Print classification matrix and confusion matrix for a given prediction
@@ -33,30 +39,36 @@ def print_model_metrics(y_test, y_preds):
     class_rept_df = pd.DataFrame(class_rept_dict).transpose()
     print(class_rept_df.to_markdown())
     cmtx = pd.DataFrame(
-        confusion_matrix(y_test, y_preds, labels = ['negative', 'neutral', 'positive']), 
-        index=['true:negative', 'true:neutral', 'true:positive'], 
+        confusion_matrix(y_test, y_preds, labels=[
+                         'negative', 'neutral', 'positive']),
+        index=['true:negative', 'true:neutral', 'true:positive'],
         columns=['pred:negative', 'pred:neutral', 'pred:positive']
     )
     print("\n")
     print(cmtx.to_markdown())
     return
 
+
 def create_stop_words(additional_stopwords=None):
     '''
     Combine SKLearn stop words with addition list (optional)
     '''
+
+    sk_stop_words = sklearn.feature_extraction.text.ENGLISH_STOP_WORDS
     if additional_stopwords:
-        return sklearn.feature_extraction.text.ENGLISH_STOP_WORDS.union(additional_stopwords)
+        return sk_stop_words.union(additional_stopwords)
     else:
-        return sklearn.feature_extraction.text.ENGLISH_STOP_WORDS
+        return sk_stop_words
+
 
 def remove_punctuation(string, punc=punctuation):
     '''
     Remove all punctuation from a string
     '''
     for character in punc:
-        string = string.replace(character,'')
+        string = string.replace(character, '')
     return string
+
 
 def remove_hashtags(string, keep_text=False):
     '''
@@ -65,9 +77,10 @@ def remove_hashtags(string, keep_text=False):
     if keep_text == True: remove the '#' symbol, not the text itself
     '''
     if keep_text:
-        return re.sub(r"\#([^\s\#]+)", r"\1", string) 
+        return re.sub(r"\#([^\s\#]+)", r"\1", string)
     else:
         return re.sub(r"\#\S+", "", string)
+
 
 def remove_tagged_users(string):
     '''
@@ -79,11 +92,14 @@ def remove_tagged_users(string):
     '''
     return re.sub(r"\@\S+", "", string)
 
+
 def remove_line_breaks(string):
-     return re.sub(r"\n", " ", string)
-    
+    return re.sub(r"\n", " ", string)
+
+
 def clean_whitespace(string):
-     return re.sub(r"\s+", " ", string.strip())
+    return re.sub(r"\s+", " ", string.strip())
+
 
 def clean_df_column(df, col):
     '''
@@ -95,6 +111,7 @@ def clean_df_column(df, col):
     df[col] = df[col].apply(clean_whitespace)
     df[col] = df[col].str.strip()
     return df
+
 
 def define_axis_style(ax, title, x_label, y_label, legend=False):
     '''
@@ -108,12 +125,19 @@ def define_axis_style(ax, title, x_label, y_label, legend=False):
         ax.legend(fontsize=16)
     return
 
-def plot_feature_importances(ax, feat_importances, feat_std_deviations, feat_names, n_features, outfilename):
+
+def plot_feature_importances(
+                    ax, feat_importances,
+                    feat_std_deviations,
+                    feat_names, n_features,
+                    outfilename
+                ):
     '''
     Plot feature importances for an NLP model
 
     feat_importances : Array of feature importances
-    feat_std_deviations : Standard deviations of feature importances (intended for RandomForest) **OPTIONAL
+    feat_std_deviations : Standard deviations of feature importances
+                                intended for RandomForest) **OPTIONAL
     feat_names : Array of feature names
     n_features : Number of top features to include in plot
     outfilename : Path to save file
@@ -125,7 +149,8 @@ def plot_feature_importances(ax, feat_importances, feat_std_deviations, feat_nam
         feat_std_deviations = feat_std_deviations[sort_idx]
     else:
         feat_std_deviations = None
-    ax.bar(feat_names[sort_idx], feat_importances[sort_idx], color='slateblue', edgecolor='black', linewidth=1, yerr=feat_std_deviations)
+    ax.bar(feat_names[sort_idx], feat_importances[sort_idx], color='slateblue',
+           edgecolor='black', linewidth=1, yerr=feat_std_deviations)
     ax.set_xticklabels(feat_names[sort_idx], rotation=40, ha='right')
     plt.tight_layout()
     plt.savefig(outfilename)

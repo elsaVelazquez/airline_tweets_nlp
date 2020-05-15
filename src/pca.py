@@ -30,9 +30,12 @@ if __name__ == '__main__':
     X_raw = data['text']
 
     # Fit/transorom CountVectorizer and TF-IDF matrix
-    count_vect = CountVectorizer(tokenizer=None, stop_words=sw,
-                                analyzer='word', min_df=10,
-                                max_features=None)
+    count_vect = CountVectorizer(
+                            tokenizer=None,
+                            stop_words=sw,
+                            analyzer='word', min_df=10,
+                            max_features=None
+                        )
 
     tfidf_transformer = TfidfTransformer(use_idf=True)
 
@@ -49,10 +52,22 @@ if __name__ == '__main__':
     prop_var_expl = cum_variance/total_variance
 
     plt.style.use('seaborn')
-    fig, ax = plt.subplots(figsize=(10,6))
+    fig, ax = plt.subplots(figsize=(10, 6))
 
-    ax.plot(prop_var_expl, color='blue', linewidth=2, label='Explained variance')
-    ax.axhline(0.8, label=r'80% Variance Explained', linestyle='--', color="grey", linewidth=1)
+    ax.plot(
+        prop_var_expl,
+        color='blue',
+        linewidth=2,
+        label='Explained variance'
+    )
+
+    ax.axhline(
+        0.8,
+        label=r'80% Variance Explained',
+        linestyle='--', color="grey",
+        linewidth=1
+    )
+
     define_axis_style(
                     ax=ax,
                     title="Proportion of Explained Variance",
@@ -60,6 +75,5 @@ if __name__ == '__main__':
                     y_label='Cumulative Proportion of Explained Variance',
                     legend=True
                 )
-    plt.savefig("images/scree_plot.png")
 
-    
+    plt.savefig("images/scree_plot.png")

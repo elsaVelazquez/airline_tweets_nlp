@@ -1,18 +1,19 @@
 from itertools import chain
 import pandas as pd
 
+
 def remove_users_of_interest(df, text_col, user_col):
     '''
     Standardize Twitter users in a specified columns
 
     Ex. Will transform
-    |      | airline               | text                                                                            |  
+    |      | airline               | text                                                                            |
     |--  :|:--------------  |:-----------------------------------------------------|
     |  0   | Virgin America      | @virginamerica I love your airline. @jack you should check them out! |
     |  1   | Southwest            | @southwestair I hate your airline! @united is way better!              |
 
     to:
-    |      | airline               | text                                                                                     |  
+    |      | airline               | text                                                                                     |
     |--  :|:--------------  |:-----------------------------------------------------------|
     |  0   | Virgin America      | @airlineaccount I love your airline. @useraccount you should check them out! |
     |  1   | Southwest            | @airlineaccount I hate your airline! @otherairlineaccount is way better!      |
@@ -34,7 +35,7 @@ def remove_users_of_interest(df, text_col, user_col):
             "unitedairlines",
             "unitedappeals",
             "unitedflyerhd"
-            
+
         },
         "Southwest": {
             "southwestair",
@@ -87,6 +88,7 @@ def remove_users_of_interest(df, text_col, user_col):
         else:
             df.loc[row_idx, text_col] = df.loc[row_idx, text_col].replace(tagged_user, "useraccount")
     return df
+
 
 if __name__ == '__main__':
     df = pd.read_csv("data/Clean_T_Tweets.csv")
