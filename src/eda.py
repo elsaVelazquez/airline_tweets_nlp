@@ -92,6 +92,9 @@ if __name__ == '__main__':
     plt.style.use("seaborn")
     raw_df = pd.read_csv("data/Tweets.csv")
 
+    # Create wordcloud for raw data
+    create_word_cloud(text=" ".join(raw_df['text']), title="Raw Tweets", additional_stop_words=[], outfilepath=f"images/raw_wordcloud.png")
+
     # plot distribution of sentiment confidence
     fig, ax = plt.subplots(1, 1, figsize=(10, 6))
     ax.hist(raw_df['airline_sentiment_confidence'],
