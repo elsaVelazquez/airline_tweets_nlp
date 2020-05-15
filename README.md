@@ -299,6 +299,10 @@ First, I tried to use the `predict_proba` methods from Naive Bayes and the Rando
 
 In this system, each model makes a definite prediction (rather than probabilities), and each model votes towards the final outcome (one model, one vote). I experimented with a variety of ways to break the ties, but ultimately I got the best performance by allowing all ties to be broken by the Random Forest.
 
+<center>
+  <img src="images/voting_diagram.png" alt="alt text" width="700">
+</center>
+
 This ensemble model utilizing a voting system ended up being my best performing model, with an accuracy of `0.79` and an F1-Score of `0.73`.
 
 ### Final Results
@@ -327,6 +331,8 @@ The Random Forest was by far the best-performing standalone model I implemented 
 Despite VADER scoring a lower in accuracy than the baseline of just guessing the majority class for each prediction, it ended up positively contributing to the combined model, even when given a vote equal to that of the Random Forest and Naive Bayes (two models that were significantly better performers on their own). 
 
 The combination of models ended up performing better than any of the standalone models.
+
+To recreate this analysis, see [src/README.md](src/README.md).
 
 ### Future Ideas
 Things I would like to implement in the future:
