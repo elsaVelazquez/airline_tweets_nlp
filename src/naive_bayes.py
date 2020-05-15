@@ -4,7 +4,6 @@ from sklearn.naive_bayes import MultinomialNB
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-import sklearn.feature_extraction.text
 import nltk
 from string import punctuation
 import numpy as np
@@ -19,6 +18,7 @@ from helpers import (
 import itertools
 import matplotlib.pyplot as plt
 from joblib import dump, load
+import os
 
 
 def wordnet_lemmetize_tokenize(text):
@@ -80,6 +80,9 @@ if __name__ == '__main__':
 
     # Fit on total training data and export
     nb_pipeline.fit(X, y)
+
+    if not os.path.exists("models/"):
+        os.mkdir('models/')
     dump(nb_pipeline, 'models/naivebayes.joblib')
 
     # Print and plot feature importances for each class

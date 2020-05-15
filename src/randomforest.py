@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.pipeline import Pipeline
 from joblib import dump, load
 from helpers import sw, define_axis_style, plot_feature_importances, print_model_metrics
+import os
 
 if __name__ == '__main__':
 
@@ -57,6 +58,8 @@ if __name__ == '__main__':
 
     # Fit on total training data and dump to /models
     rf_pipeline.fit(X, y)
+    if not os.path.exists("models/"):
+        os.mkdir('models/')
     dump(rf_pipeline, 'models/randomforest.joblib')
 
     # Plot feature importances
