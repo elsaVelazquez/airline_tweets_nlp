@@ -4,7 +4,7 @@ from data_cleaning import data_cleaning
 from identify_users_of_interest import remove_users_of_interest
 import pandas as pd
 from helpers import print_model_metrics
-from vader_analysis import vader_predict, vader_predict_proba
+from vader_analysis import VaderAnalysis
 from statistics import mode, StatisticsError
 import numpy as np
 
@@ -85,7 +85,8 @@ if __name__ == '__main__':
     print("\n\n")   
 
     # Predict just using VADER and print model evaluations
-    y_preds_vader = vader_predict(X_holdout)
+    vader = VaderAnalysis()
+    y_preds_vader = vader.predict(X_holdout)
     print("VADER Metrics:")
     print_model_metrics(y_holdout, y_preds_vader)
 
@@ -103,7 +104,7 @@ if __name__ == '__main__':
     nb_fmt_probas = format_probas(labels, y_probas_nb)
 
     # Get VADER probabilities
-    y_probas_vader = vader_predict_proba(X_holdout)
+    y_probas_vader = vader.predict_proba(X_holdout)
 
     # Predict just using all model probabilities and print evaluations
     y_preds_probas = stack_models_probas(rf_fmt_probas, nb_fmt_probas, y_probas_vader, weights=[1, 0.8, 0.5])
