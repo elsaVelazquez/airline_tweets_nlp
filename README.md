@@ -1,5 +1,33 @@
+![Banner](images/airplane_banner.jpg "Banner")
+<div style="text-align: right"> Photo Courtesy of Ross Parmly </div>
+
+# Table of Contents
+- [Airline Tweet Sentiment Analysis and Classification (NLP)](#airline-tweet-sentiment-analysis-and-classification--nlp-)
+  * [Raw Data](#raw-data)
+    + [Challenges](#challenges)
+  * [Data Cleaning](#data-cleaning)
+    + [User Standardization](#user-standardization)
+  * [Exploratory Data Analysis](#exploratory-data-analysis)
+    + [Sentiment Confidence](#sentiment-confidence)
+    + [Sentiment Distribution](#sentiment-distribution)
+    + [Principal Component Analysis](#principal-component-analysis)
+  * [Text Processing](#text-processing)
+  * [Models](#models)
+    + [Naive Bayes](#naive-bayes)
+      - [Naive Bayes Confusion Matrix](#naive-bayes-confusion-matrix)
+    + [Random Forest](#random-forest)
+      - [Random Forest Confusion Matrix](#random-forest-confusion-matrix)
+    + [VADER Sentiment Analysis](#vader-sentiment-analysis)
+      - [VADER Sentiment Analysis Confusion Matrix](#vader-sentiment-analysis-confusion-matrix)
+    + [Model Stacking](#model-stacking)
+    + [Final Results](#final-results)
+      - [Final Stacked Model Confusion Matrix:](#final-stacked-model-confusion-matrix-)
+  * [Conclusions](#conclusions)
+    + [Future Ideas](#future-ideas)
+    + [Sources](#sources)
+
 # Airline Tweet Sentiment Analysis and Classification (NLP)
-This project uses a combination of supervised and unsupervised models in order to predict Tweet sentiment.
+This project uses a combination of supervised and unsupervised models in order to predict tweet sentiment. For the purposes of this project, sentiment is classified as either `positive`, `negative`, or `neutral`.
 
 Throughout this document, we will refer to two things found commonly in social media text data, `tags` and `hashtags`.
 
@@ -15,10 +43,12 @@ Ex.
 "This flight is still hasn't taken off!! #imsobored"
 ```
 
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 
 ## Raw Data
 
-[The dataset](https://www.kaggle.com/crowdflower/twitter-airline-sentiment) was sourced from kaggle.com and consists of ~14,000 tweets at various airlines.
+[The dataset](https://www.kaggle.com/crowdflower/twitter-airline-sentiment) was sourced from kaggle and consists of ~14,000 tweets aimed at various airlines.
 
 Each of row of data has the following information associated:
 * airline : The airline the tweet was aimed at
@@ -115,26 +145,26 @@ This wordcloud is a bit more promising, as we start to see words that will be mo
 ## Exploratory Data Analysis
 
 ### Sentiment Confidence
-One of the fields we had from our raw data was `airline_sentiment_confidence` (a confidence level associated with each sentiment label).
+One of the fields we had from the raw data was `airline_sentiment_confidence` (a confidence level associated with each sentiment label).
 
 Below is a distribution of these confidences.
 
 ![Confidence Distribution](images/sentiment_conf_dist.png "Confidence Distribution")
 
-After a bit of exploration, I found those tweets in the lower confidence (> 50%) levels were often labelled inaccurately, so they were dropped from our dataset.
+After a bit of exploration, I found those tweets in the lower confidence (> 50%) levels were often labelled inaccurately, so they were dropped from the dataset.
 
 ### Sentiment Distribution
 After considering data with greater than 50% confidence on the labelling, we had the following distributions of sentiments:
 
 ![Total Sentiment Dist](images/overall_tweet_sentiment.png "Total Sentiment Dist")
 
-We can see that negative tweets are our largest sentiment class (followed by neutral and then positive). This is unsurprising as generally, people go to Twitter to express their frustrations more often than leave positive feedback.
+We can see that negative tweets are the largest sentiment class (followed by neutral and then positive). This is unsurprising as generally, people go to Twitter to express their frustrations more often than leave positive feedback.
 
 Grouped by airline, the sentiments looked like this:
 
 ![Airline Sentiment Dist](images/airline_tweet_sentiment.png "Airline Sentiment Dist")
 
-We see that **United** is most represented in our dataset, with **Virgin America** being the least represented. If we look at this same data as proportions, we see the following:
+We see that **United** is most represented in the dataset, with **Virgin America** being the least represented. If we look at this same data as proportions, we see the following:
 
 ![Airline Sentiment Dist Normalized](images/airline_tweet_sentiment_normal.png "Airline Sentiment Dist Normalized")
 
@@ -152,7 +182,7 @@ For negative tweets, we see equally descriptive words, such as "bag", "cancelled
 Neutral tweets look a bit less descriptive, containing a lot of words found in other classes.
 
 ### Principal Component Analysis
-In effort to get a clearer idea of how our data is distributed, I used PCA with three components simply with the goal of visualizing the data in comprehendable dimensions. This process informed the [User Standardization](#User-Standardization) transformation.
+In effort to get a clearer idea of how the data is distributed, I used PCA with three components simply with the goal of visualizing the data in comprehendable dimensions. This process informed the [User Standardization](#User-Standardization) transformation.
 
 The first animation are three components before transforming/standardizing the users. The transformation's benefit can be seen in the lower animation.
 
@@ -161,13 +191,13 @@ Again, positive tweets are green, negative tweets are red, and neutral tweets ar
 ![PCA1](images/pca_animation.gif "PCA1") 
 ![PCA2](images/pca_animation_no_users.gif "PCA2")
 
-Although there is still a lot of overlap between our sentiment classes, it certainly looks better in the second animation. Essentially, the graph on the right was clustering simply based on the tagged airline, with little hope for finding structure aligning with the tweet sentiment.
+Although there is still a lot of overlap between the sentiment classes, it certainly looks better in the second animation. Essentially, the graph on the right was clustering simply based on the tagged airline, with little hope for finding structure aligning with the tweet sentiment.
 
 It is worth noting that three principal components really only accounts for a small proportion of the variance seen in the data.
 
 ![SCREE Plot](images/scree_plot.png "SCREE Plot")
 
-In order to account for 80% of the variance in our data, we'd need ~650 principal components. This ruled out using these principal components for predictions.
+In order to account for 80% of the variance in the data, we'd need ~650 principal components. This ruled out using these principal components for predictions.
 
 ## Text Processing
 To properly featurize the tweet data before attempting to fit any models, I used TF-IDF transformers and a CountVectorizer with a custom lemmatizer. This lemmatizer was a combination of WordNet from SKLearn and a custom dictionary built to handle words specific to this dataset.
@@ -200,11 +230,11 @@ Using this model, I was able to see the top features (words) associated with eac
 ![Neutral NB](images/nb_top_features_neutral.png "Neutral NB") 
 ![Negative NB](images/nb_top_features_negative.png "Negative NB")
 
-We get similar features as we saw before with our early wordclouds (aside from the addition of our transformed users). For positive sentiment, we see `thank`, `great`, `awesome`, and other positively associated words. 
+We get similar features as we saw before with the early wordclouds (aside from the addition of the transformed users). For positive sentiment, we see `thank`, `great`, `awesome`, and other positively associated words. 
 
 For neutral sentiment, we see some words like `please`, `what`, and `when`; indicating many tweets in this class were questions asked of the airlines by twitter users, not necessarily positive or negative.
 
-For negative sentiment, we see similar words as before; `bag`, `delay`, and `cancel`. We also see that the transformed user accounts are pretty informative for this class. We see that `otherairlineaccount` is our most important feature for this class. This means that if a user tags a different airline in addition to the airline being tweeted at, it is likely (high log probability) a complaint or a negative tweet.
+For negative sentiment, we see similar words as before; `bag`, `delay`, and `cancel`. We also see that the transformed user accounts are pretty informative for this class. We see that `otherairlineaccount` is the most important feature for this class. This means that if a user tags a different airline in addition to the airline being tweeted at, it is likely (high log probability) a complaint or a negative tweet.
 
 
 #### Naive Bayes Confusion Matrix
@@ -250,7 +280,7 @@ demo_vader("this airline is usually good, but this time they lost my bags :(")
 >>> {'neg': 0.363, 'neu': 0.533, 'pos': 0.104, 'compound': -0.705}
 ```
 
-This model performed the worst out of my three models, with an accuracy of `0.55` (~0.06 less than guessing the majority class for every prediction), and an F1-Score of `0.52` (~0.27 higher than our baseline).
+This model performed the worst out of my three models, with an accuracy of `0.55` (~0.06 less than guessing the majority class for every prediction), and an F1-Score of `0.52` (~0.27 higher than the baseline).
 
 #### VADER Sentiment Analysis Confusion Matrix
 
@@ -292,6 +322,18 @@ This stacked model utilizing a voting system ended up being my best performing m
 
 ## Conclusions
 
-My most prominent conclusion is: use a Random Forest! I was surprised how well the Random Forest performed in an NLP context. Without much tuning, it quickly became the best model in my stack.
+The Random Forest was by far the best-performing standalone model I implemented on this dataset.
 
 Despite VADER scoring a lower in accuracy than the baseline of just guessing the majority class for each prediction, it ended up positively contributing to the combined model, even when given a vote equal to that of the Random Forest and Naive Bayes (two models that were significantly better performers on their own). 
+
+The combination of models ended up performing better than any of the standalone models.
+
+### Future Ideas
+Things I would like to implement in the future:
+* Implement an RNN or CNN and compare performance
+* Use GridSearchCV to better tune parameters of existing models
+* Try TextBlob or IBM Watson instead of VADER and compare performance
+
+### Sources
+* https://www.kaggle.com/crowdflower/twitter-airline-sentiment
+* https://unsplash.com/photos/rf6ywHVkrlY
