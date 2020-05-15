@@ -152,15 +152,16 @@ For negative tweets, we see equally descriptive words, such as "bag", "cancelled
 Neutral tweets look a bit less descriptive, containing a lot of words found in other classes.
 
 ### Principal Component Analysis
-In effort to get a clearer idea of how our data is distributed, I did PCA down to three components simply with the goal of visualizing the data in comprehendable dimensions. This process informed the [User Standardization](#User-Standardization) transformation.
+In effort to get a clearer idea of how our data is distributed, I used PCA with three components simply with the goal of visualizing the data in comprehendable dimensions. This process informed the [User Standardization](#User-Standardization) transformation.
+
+The first animation are three components before transforming/standardizing the users. The transformation's benefit can be seen in the lower animation.
 
 Again, positive tweets are green, negative tweets are red, and neutral tweets are yellow.
 
 ![PCA1](images/pca_animation.gif "PCA1") 
 ![PCA2](images/pca_animation_no_users.gif "PCA2")
 
-
-The top animation is the PCA before transforming/standardizing the users. The transformation's benefit can be seen in the lower animation. Although there is still a lot of overlap between our sentiment classes, it certainly looks better on the right. Essentially, the graph on the right was clustering simply based on the tagged airline, with little hope for finding structure aligning with the tweet sentiment.
+Although there is still a lot of overlap between our sentiment classes, it certainly looks better in the second animation. Essentially, the graph on the right was clustering simply based on the tagged airline, with little hope for finding structure aligning with the tweet sentiment.
 
 It is worth noting that three principal components really only accounts for a small proportion of the variance seen in the data.
 
