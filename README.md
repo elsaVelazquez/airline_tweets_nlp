@@ -332,6 +332,8 @@ Things I would like to implement in the future:
 * Implement an RNN or CNN and compare performance
 * Use GridSearchCV to better tune parameters of existing models
 * Try TextBlob or IBM Watson instead of VADER and compare performance
+* Featurize data in other ways (ex. number of emojis, number of all-caps words)
+* Try to standardize spellings of commonly mispelled words (thx, sux, etc.)
 
 ### Sources
 * https://www.kaggle.com/crowdflower/twitter-airline-sentiment
