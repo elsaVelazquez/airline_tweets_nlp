@@ -334,6 +334,7 @@ Things I would like to implement in the future:
 * Try TextBlob or IBM Watson instead of VADER and compare performance
 * Featurize data in other ways (ex. number of emojis, number of all-caps words)
 * Try to standardize spellings of commonly mispelled words (thx, sux, etc.)
+* Get more data!
 
 ### Sources
 * https://www.kaggle.com/crowdflower/twitter-airline-sentiment
