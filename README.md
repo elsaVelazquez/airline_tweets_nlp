@@ -314,7 +314,7 @@ This ensemble model utilizing a voting system ended up being my best performing 
 | Naive Bayes   	| 0.63             	| 0.74     	|
 | Random Forest 	| 0.71             	| 0.77     	|
 | VADER         	| 0.52             	| 0.55     	|
-| Ensemble Model 	| 0.73             	| 0.79     	|
+| **Ensemble Model** 	| **0.73**             	| **0.79**     	|
 
 #### Final Ensemble Model Confusion Matrix:
 
