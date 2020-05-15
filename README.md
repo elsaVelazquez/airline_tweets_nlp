@@ -160,7 +160,7 @@ Again, positive tweets are green, negative tweets are red, and neutral tweets ar
 ![PCA2](images/pca_animation_no_users.gif "PCA2")
 
 
-The animation on the left is the PCA before transforming/standardizing the users. The transformation's benefit can be seen in the right animation. Although there is still a lot of overlap between our sentiment classes, it certainly looks better on the right. Essentially, the graph on the right was clustering simply based on the tagged airline, with little hope for finding structure aligning with the tweet sentiment.
+The top animation is the PCA before transforming/standardizing the users. The transformation's benefit can be seen in the lower animation. Although there is still a lot of overlap between our sentiment classes, it certainly looks better on the right. Essentially, the graph on the right was clustering simply based on the tagged airline, with little hope for finding structure aligning with the tweet sentiment.
 
 It is worth noting that three principal components really only accounts for a small proportion of the variance seen in the data.
 
