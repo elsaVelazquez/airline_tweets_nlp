@@ -19,9 +19,9 @@
       - [Random Forest Confusion Matrix](#random-forest-confusion-matrix)
     + [VADER Sentiment Analysis](#vader-sentiment-analysis)
       - [VADER Sentiment Analysis Confusion Matrix](#vader-sentiment-analysis-confusion-matrix)
-    + [Model Stacking](#model-stacking)
+    + [Model Assembly](#model-assembly)
     + [Final Results](#final-results)
-      - [Final Stacked Model Confusion Matrix:](#final-stacked-model-confusion-matrix-)
+      - [Final Ensemble Model Confusion Matrix:](#final-ensemble-model-confusion-matrix-)
   * [Conclusions](#conclusions)
     + [Future Ideas](#future-ideas)
     + [Sources](#sources)
@@ -291,7 +291,7 @@ This model performed the worst out of my three models, with an accuracy of `0.55
 | true:positive |              23 |             56 |             509 |
 
 
-### Model Stacking
+### Model Assembly
 
 I tried a few methods of combining these three models with varying success. The two main methods I tried were a **probability** based, and a **voting** based system.
 
@@ -299,7 +299,7 @@ First, I tried to use the `predict_proba` methods from Naive Bayes and the Rando
 
 In this system, each model makes a definite prediction (rather than probabilities), and each model votes towards the final outcome (one model, one vote). I experimented with a variety of ways to break the ties, but ultimately I got the best performance by allowing all ties to be broken by the Random Forest.
 
-This stacked model utilizing a voting system ended up being my best performing model, with an accuracy of `0.79` and an F1-Score of `0.73`.
+This ensemble model utilizing a voting system ended up being my best performing model, with an accuracy of `0.79` and an F1-Score of `0.73`.
 
 ### Final Results
 
@@ -309,9 +309,9 @@ This stacked model utilizing a voting system ended up being my best performing m
 | Naive Bayes   	| 0.63             	| 0.74     	|
 | Random Forest 	| 0.71             	| 0.77     	|
 | VADER         	| 0.52             	| 0.55     	|
-| Stacked Model 	| 0.73             	| 0.79     	|
+| Ensemble Model 	| 0.73             	| 0.79     	|
 
-#### Final Stacked Model Confusion Matrix:
+#### Final Ensemble Model Confusion Matrix:
 
 |               |   pred:negative |   pred:neutral |   pred:positive |
 |:--------------|----------------:|---------------:|----------------:|
