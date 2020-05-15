@@ -156,12 +156,9 @@ In effort to get a clearer idea of how our data is distributed, I did PCA down t
 
 Again, positive tweets are green, negative tweets are red, and neutral tweets are yellow.
 
-<center>
-    <p float="center">
-    <img src="images/pca_animation.gif" width="500" />
-    <img src="images/pca_animation_no_users.gif" width="500" /> 
-    </p>
-</center>
+![PCA1](images/pca_animation.gif "PCA1") 
+![PCA2](images/pca_animation_no_users.gif "PCA2")
+
 
 The animation on the left is the PCA before transforming/standardizing the users. The transformation's benefit can be seen in the right animation. Although there is still a lot of overlap between our sentiment classes, it certainly looks better on the right. Essentially, the graph on the right was clustering simply based on the tagged airline, with little hope for finding structure aligning with the tweet sentiment.
 
