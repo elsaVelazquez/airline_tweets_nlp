@@ -57,7 +57,7 @@ if __name__ == '__main__':
     # Load and clean holdout data
     data_cleaning("data/Holdout_Tweets.csv", "data/Clean_Holdout_Tweets.csv")
     holdout_df = pd.read_csv("data/Clean_Holdout_Tweets.csv")
-    holdout_df = remove_users_of_interest(holdout_df, 'text', 'user')
+    holdout_df = remove_users_of_interest(holdout_df, 'text', 'airline')
     holdout_df.to_csv("data/Clean_Holdout_Tweets_wo_Users.csv")
 
     X_holdout = holdout_df['text']
