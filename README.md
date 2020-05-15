@@ -25,6 +25,7 @@
   * [Conclusions](#conclusions)
     + [Future Ideas](#future-ideas)
     + [Sources](#sources)
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 # Airline Tweet Sentiment Analysis and Classification (NLP)
 This project uses a combination of supervised and unsupervised models in order to predict tweet sentiment. For the purposes of this project, sentiment is classified as either `positive`, `negative`, or `neutral`.
@@ -42,8 +43,6 @@ Ex.
 ```
 "This flight is still hasn't taken off!! #imsobored"
 ```
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 
 ## Raw Data
@@ -339,6 +338,9 @@ Things I would like to implement in the future:
 * Implement an RNN or CNN and compare performance
 * Use GridSearchCV to better tune parameters of existing models
 * Try TextBlob or IBM Watson instead of VADER and compare performance
+* Featurize data in other ways (ex. number of emojis, number of all-caps words)
+* Try to standardize spellings of commonly mispelled words (thx, sux, etc.)
+* Get more data!
 
 ### Sources
 * https://www.kaggle.com/crowdflower/twitter-airline-sentiment
