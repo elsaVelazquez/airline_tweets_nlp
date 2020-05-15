@@ -25,6 +25,7 @@
   * [Conclusions](#conclusions)
     + [Future Ideas](#future-ideas)
     + [Sources](#sources)
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 # Airline Tweet Sentiment Analysis and Classification (NLP)
 This project uses a combination of supervised and unsupervised models in order to predict tweet sentiment. For the purposes of this project, sentiment is classified as either `positive`, `negative`, or `neutral`.
@@ -42,8 +43,6 @@ Ex.
 ```
 "This flight is still hasn't taken off!! #imsobored"
 ```
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 
 ## Raw Data
