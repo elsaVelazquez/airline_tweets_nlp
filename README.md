@@ -12,11 +12,14 @@
     + [Sentiment Distribution](#sentiment-distribution)
     + [Principal Component Analysis](#principal-component-analysis)
   * [Text Processing](#text-processing)
+    + [Text Featurization](#text-featurization)
   * [Models](#models)
     + [Naive Bayes](#naive-bayes)
       - [Naive Bayes Confusion Matrix](#naive-bayes-confusion-matrix)
-    + [Random Forest](#random-forest)
-      - [Random Forest Confusion Matrix](#random-forest-confusion-matrix)
+    + [Random Forest (TF-IDF)](#random-forest-tf-idf)
+      - [Random Forest Confusion Matrix (TF-IDF)](#random-forest-confusion-matrix-tf-idf)
+    + [Random Forest (Doc2Vec)](#random-forest-doc2vec)
+      - [Random Forest Confusion Matrix (Doc2Vec)](#random-forest-confusion-matrix-doc2vec)
     + [VADER Sentiment Analysis](#vader-sentiment-analysis)
       - [VADER Sentiment Analysis Confusion Matrix](#vader-sentiment-analysis-confusion-matrix)
     + [Model Assembly](#model-assembly)
@@ -198,7 +201,7 @@ It is worth noting that three principal components only accounts for a small pro
 
 ![SCREE Plot](images/scree_plot.png "SCREE Plot")
 
-In order to account for 80% of the variance in the data, we'd need ~650 principal components. This ruled out using these principal components for predictions.
+In order to account for 80% of the variance in the data, we'd need ~600 principal components. This ruled out using these principal components as features for predictions
 
 ## Text Processing
 To properly featurize the tweet data before attempting to fit any models, I used TF-IDF transformers and a CountVectorizer with a custom lemmatizer. This lemmatizer was a combination of WordNet from SKLearn and a custom dictionary built to handle words specific to this dataset.
@@ -213,9 +216,43 @@ additional_lemmatize_dict = {
     "baggage": "bag",
     "bags": "bag",
     "luggage": "bag",
-    "dms": "dm"
+    "dms": "dm",
+    "thanks": "thank"
 }
 ```
+
+### Text Featurization
+I looked at two different schools of thought to featurize the text.
+1. Bag of Words
+1. Continuous Bag of Words
+
+For bag of words, I used two specific methods of vectorizing the text documents, the standard count vectorizer and a a TF-IDF matrix. 
+
+Below is an example of a count vectorizer. 
+<center>
+  <img src="images/CV.png" alt="alt text" width="700">
+</center>
+
+In this simple example, we convert the string `"@southwestair continues to prove to be the best airlines 💪"` to the vector `[1, 1, 2, 1, 1, 1, 1, 1, 1] `.
+
+A flaw in this approach is that it naively assumes each word has no relationship to the words around it.
+* Ex, "man bites dog" and "dog bites man" are represented **exactly the same** with a bag of words
+
+<br>
+<br>
+
+A **Continuous Bag of Words** approach is much more complex. It utilizes a word's *context* to vectorize it. It does this by training a single layer perceptron on the context of a word (as defined by a `window` parameter), with the ouput as the **focus word**. The weights from this single layer are then used as the word vector. Below is a simple example of a Continuous Bag of Words model called `Word2Vec`.
+
+<center>
+  <img src="images/w2v.png" alt="alt text" width="700">
+</center>
+
+In this simple example, we convert the word `"best"` to the vector `[-0.4, 1.2, 0.7, 1.1, -1.5] `. Unlike the traditional  bag of words approach, the vector resulting from a continuous bag of words contains information regarding a word's **context**.
+
+Below we can see the difference these two different types of text feautizing can make using the same principal component analysis as before.
+
+![PCA2](images/pca_animation_no_users.gif "PCA2")
+![PCA3](images/pca_animation_no_users_d2v.gif "PCA3")
 
 ## Models
 
@@ -223,7 +260,7 @@ Models were tuned and evaluated based on their macro-averaged F1-Score. I chose 
 
 ### Naive Bayes
 
-Using a MultiNomial Naive Bayes classifier model, I was able to get pretty good results, with an accuracy of `0.78` and an F1-Score of `0.63` against the holdout data.
+Using a MultiNomial Naive Bayes classifier model, I was able to get pretty good results, with an accuracy of `0.74` and an F1-Score of `0.62` against the holdout data.
 
 Using this model, I was able to see the top features (words) associated with each predicted sentiment.
 
@@ -241,13 +278,13 @@ For negative sentiment, we see similar words as before; `bag`, `delay`, and `can
 #### Naive Bayes Confusion Matrix
 |               |   pred:negative |   pred:neutral |   pred:positive |
 |:--------------|----------------:|---------------:|----------------:|
-| true:negative |            2175 |             47 |              20 |
-| true:neutral  |             526 |            267 |              37 |
-| true:positive |             272 |             35 |             281 |
+| true:negative |            2174 |             45 |              23 |
+| true:neutral  |             546 |            246 |              38 |
+| true:positive |             283 |             30 |             275 |
 
-### Random Forest
+### Random Forest (TF-IDF)
 
-The Random Forest was the best performing model that I tried, with an accuracy `0.77` and an F1-Score of `0.71` against the holdout data.
+The Random Forest was the best performing model that I tried, with an accuracy `0.78` and an F1-Score of `0.73` against the holdout data.
 
 The following chart shows the number of estimators (trees) used in the Random Forest vs F1-Score.
 ![N Trees](images/rf_n_estimators.png "N Trees")
@@ -256,15 +293,29 @@ After examining this chart, I saw little difference beyond 250 estimators, so I 
 
 ![N Trees](images/rf_feat_importances.png "N Trees")
 
-Since I found trimming down my features only hurt my model performance, it is no surprise all my feature importances are so low, but again, we see some familiar words, such as `thanks`, `awesome`, `great`, `delay`, `cancel`.
+Since I found trimming down my features only hurt my model performance, it is no surprise all my feature importances are so low, but again, we see some familiar tokens, such as `thanks`, `!`, `?`, `awesome`, `great`, `delay`, `cancel`.
 
-#### Random Forest Confusion Matrix
+#### Random Forest Confusion Matrix (TF-IDF)
 |               |   pred:negative |   pred:neutral |   pred:positive |
 |:--------------|----------------:|---------------:|----------------:|
 | true:negative |            1956 |            207 |              79 |
 | true:neutral  |             272 |            493 |              65 |
 | true:positive |             131 |             86 |             371 |
 
+
+### Random Forest (Doc2Vec)
+Running the same Random Forest Classifier on the text featurized using `Doc2Vec` yielded surprisingly similar results, despite the models being trained on very different data. This was surprising to me, as I expected the Doc2Vec featurized data to have much stronger predictability. I attribute this to my documents' length (Tweets are limited to 280 characters), as well as the the general size of my dataset (~14,000 is a bit short).
+
+The Doc2Vec featurized Random Forest was better at predicting both Positive and Negative sentiments, but performed worse than the traditional TF-IDF featurized Random Forest when it came to predicting neutral sentiment.
+
+This model had an accuracy of `0.78` and an F1-Score of `0.73` against the holdout data.
+
+#### Random Forest Confusion Matrix (Doc2Vec)
+|               |   pred:negative |   pred:neutral |   pred:positive |
+|:--------------|----------------:|---------------:|----------------:|
+| true:negative |            1967 |            175 |             100 |
+| true:neutral  |             286 |            469 |              75 |
+| true:positive |              94 |             69 |             425 |
 
 ### VADER Sentiment Analysis
 
@@ -287,47 +338,50 @@ This model performed the worst out of my three models, with an accuracy of `0.55
 
 |               |   pred:negative |   pred:neutral |   pred:positive |
 |:--------------|----------------:|---------------:|----------------:|
-| true:negative |            1144 |            410 |             688 |
-| true:neutral  |             112 |            357 |             361 |
-| true:positive |              23 |             56 |             509 |
+| true:negative |            1143 |            403 |             696 |
+| true:neutral  |             117 |            354 |             359 |
+| true:positive |              25 |             56 |             507 |
 
 
 ### Model Assembly
 
 I tried a few methods of combining these three models with varying success. The two main methods I tried were a **probability** based, and a **voting** based system.
 
-First, I tried to use the `predict_proba` methods from Naive Bayes and the Random Forest, combined with the probabilities VADER outputs by default. I tried a variety of weights associated with each of these probabilities to account for some models being better than others, but ultimately, they all performed worse than a simple **voting** system.
-
-In this system, each model makes a definite prediction (rather than probabilities), and each model votes towards the final outcome (one model, one vote). I experimented with a variety of ways to break the ties, but ultimately I got the best performance by allowing all ties to be broken by the Random Forest.
+Overall, I found the **probability** based system outperformed the voting system. By taking all of the predicted probabilities from all four of my models, applying some weights (weights were determined through brute force), taking the sum of the weighted probabilities, and finally predicting the class with the maximum probability.
 
 <center>
-  <img src="images/voting_diagram.png" alt="alt text" width="700">
+  <img src="images/ensemble_proba_flowchart.jpg" alt="alt text" width="700">
 </center>
 
-This ensemble model utilizing a voting system ended up being my best performing model, with an accuracy of `0.79` and an F1-Score of `0.73`.
+This ensemble model ended up being my top performing model, with an accuracy of `0.80` and an F1-Score of `0.76`.
 
 ### Final Results
 
 | Model         	| F1-Score (macro) 	| Accuracy 	|
 |---------------	|------------------	|----------	|
 | Baseline      	| 0.25             	| 0.61     	|
-| Naive Bayes   	| 0.63             	| 0.74     	|
-| Random Forest 	| 0.71             	| 0.77     	|
+| Naive Bayes   	| 0.61             	| 0.74     	|
+| Random Forest (TF-IDF) 	| 0.73             	| 0.78     	|
+| Random Forest (Doc2Vec) 	| 0.73             	| 0.78     	|
 | VADER         	| 0.52             	| 0.55     	|
-| **Ensemble Model** 	| **0.73**             	| **0.79**     	|
+| **Ensemble Model** 	| **0.76**             	| **0.80**     	|
 
 #### Final Ensemble Model Confusion Matrix:
 
 |               |   pred:negative |   pred:neutral |   pred:positive |
 |:--------------|----------------:|---------------:|----------------:|
-| true:negative |            2038 |            141 |              63 |
-| true:neutral  |             294 |            470 |              66 |
-| true:positive |             131 |             68 |             389 |
+| true:negative |            1980 |            200 |              62 |
+| true:neutral  |             230 |            545 |              55 |
+| true:positive |              95 |             67 |             426 |
 
 
 ## Conclusions
 
 The Random Forest was by far the best-performing standalone model I implemented on this dataset.
+
+Although the Doc2Vec featurized text did not outperform the same model trained on a traditional bag of words, the combination of these models ended up working quite well. Since the data was featurized entirely differently, each random forest was able to make up for the shortcomings of the other. 
+
+Although I was surprised to see the Doc2Vec featurized text perform about the same as the same model trained on a bag of words, I attribute the similarity to the general size of my documents (280 character limit), and the size of my dataset (14,000 documents).
 
 Despite VADER scoring a lower in accuracy than the baseline of just guessing the majority class for each prediction, it ended up positively contributing to the combined model, even when given a vote equal to that of the Random Forest and Naive Bayes (two models that were significantly better performers on their own). 
 

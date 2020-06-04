@@ -7,36 +7,18 @@ from sklearn.pipeline import Pipeline
 import nltk
 from string import punctuation
 import numpy as np
-from nltk.stem import WordNetLemmatizer
 from helpers import (
             sw, remove_punctuation,
-            additional_lemmatize_dict,
             plot_feature_importances,
             define_axis_style,
-            print_model_metrics
+            print_model_metrics,
+            wordnet_lemmetize_tokenize
         )
 import itertools
 import matplotlib.pyplot as plt
 from joblib import dump, load
 import os
 
-
-def wordnet_lemmetize_tokenize(text):
-    '''
-    Custom tokenizer object that applies WordNetLemmatizer
-    Intended to be passed into CountVectorizer as a tokenizer object
-    '''
-    lemmatizer = WordNetLemmatizer()
-    words = remove_punctuation(text).split()
-    tokens = []
-    for word in words:
-        if word not in sw:
-            if word in additional_lemmatize_dict:
-                clean_word = additional_lemmatize_dict[word]
-            else:
-                clean_word = lemmatizer.lemmatize(word)
-            tokens.append(clean_word)
-    return tokens
 
 
 if __name__ == '__main__':
@@ -56,7 +38,7 @@ if __name__ == '__main__':
                         analyzer='word',
                         min_df=1,
                         max_df=0.2,
-                        stop_words=['wa', 'u'],
+                        stop_words=['wa', 'u', '@otherairlineaccount', '@useraccount', '@airlineaccount'],
                         max_features=1000
                     )
 

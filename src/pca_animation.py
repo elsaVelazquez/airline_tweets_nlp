@@ -11,12 +11,14 @@ import os
 import imageio
 import glob
 
+from d2v_custom import CustomDoc2Vec
+
 
 def create_3d_scatter(ax, x, y, z, colors, title):
     '''
     Create 3D scatter okit with given X, Y, and Z arrays
     '''
-    ax.scatter(x, y, z, c=colors, alpha=1, s=.7)
+    ax.scatter(x, y, z, c=colors, alpha=1, s=1)
     ax.set_title(title, fontdict={'fontsize': 16})
     return ax
 
@@ -67,8 +69,8 @@ def create_gif(
 
 
 def create_pca_animation(
-                    csv_path, text_col, target_col,
-                    title, additional_stop_words, color_dict,
+                    data, targets,
+                    title, color_dict,
                     frame_path, outfilepath
                 ):
     '''
@@ -77,10 +79,8 @@ def create_pca_animation(
 
     Intended for NLP exploration
 
-    csv_path : Data path to CSV
-    text_col : Name of text column to vectorize and form principal components
-    target_col : Name of target column
-    additional_stop_words : stop words included in addition to SKLearn defaults
+    data : X feature matrix
+    targets : List of targets
     color_dict : Dictionary with targets as keys and desired colors as values
     frame_path : Path to create 'pca_anim' directory to store frames to animate
     outfilepath : Path of output GIF animation
@@ -88,33 +88,16 @@ def create_pca_animation(
 
     plt.style.use("seaborn")
 
-    # combine stop words with SKLearn default stop words
-    sw = create_stop_words(additional_stop_words)
-
-    # read data
-    data = pd.read_csv(csv_path)
-    X_raw = data[text_col]
-
-    # Transform using CountVectorizer and TF-IDF matrix
-    count_vect = CountVectorizer(
-                            tokenizer=None,
-                            stop_words=sw,
-                            analyzer='word',
-                            min_df=100,  # words must appear 100 times
-                            max_features=None
-                        )
-
-    tfidf_transformer = TfidfTransformer(use_idf=True)
-
-    X_vec = count_vect.fit_transform(X_raw)
-    X_tfidf = tfidf_transformer.fit_transform(X_vec)
-
-    # Run PCA w/ 3 components (so it can be visualized in 3d space)
+    # Run PCA w/ 3 components so data can be visualized in 3d space
     pca = PCA(n_components=3)
-    X_pca = pca.fit_transform(X_tfidf.toarray())
+
+    if type(data) != np.ndarray:
+        data = data.toarray()
+
+    X_pca = pca.fit_transform(data)
 
     # define colors for scatter plot
-    colors = [color_dict[y] for y in data[target_col]]
+    colors = [color_dict[y] for y in targets]
 
     fig = plt.figure(figsize=(10, 6), dpi=80)
     ax = plt.axes(projection='3d')
@@ -151,6 +134,25 @@ def create_pca_animation(
         )
     return
 
+def tfidf_vectorize(text, stop_words):
+    # Transform using CountVectorizer and TF-IDF matrix
+    
+    # combine stop words with SKLearn default stop words
+    sw = create_stop_words(stop_words)
+    
+    count_vect = CountVectorizer(
+                            tokenizer=None,
+                            stop_words=sw,
+                            analyzer='word',
+                            min_df=100,  # words must appear 100 times
+                            max_features=None
+                        )
+
+    tfidf_transformer = TfidfTransformer(use_idf=True)
+
+    X_vec = count_vect.fit_transform(text)
+    X_tfidf = tfidf_transformer.fit_transform(X_vec)
+    return X_tfidf
 
 if __name__ == '__main__':
 
@@ -169,24 +171,48 @@ if __name__ == '__main__':
         "neutral": "darkgoldenrod"
     }
 
+    # read data
+    csv_path = "data/Clean_T_Tweets.csv"
+    data = pd.read_csv(csv_path)
+    X_raw = data['text']
+
+    # vectorize
+    X_tfidf = tfidf_vectorize(X_raw, stop_words=more_sw)
+
     create_pca_animation(
-            csv_path="data/Clean_T_Tweets.csv",
-            text_col="text",
-            target_col="airline_sentiment",
+            data=X_tfidf,
+            targets=data['airline_sentiment'],
             title="Tweet Sentiment With 3 Principal Components",
-            additional_stop_words=more_sw,
             color_dict=color_dict,
             frame_path="images",
             outfilepath="images/pca_animation.gif"
         )
 
+    # read data
+    csv_path = "data/Clean_T_Tweets_wo_Users.csv"
+    data = pd.read_csv(csv_path)
+    X_raw = data['text']
+
+    # vectorize
+    X_tfidf = tfidf_vectorize(X_raw, stop_words=more_sw)
+
     create_pca_animation(
-            csv_path="data/Clean_T_Tweets_wo_Users.csv",
-            text_col="text",
-            target_col="airline_sentiment",
-            title="Tweet Sentiment With 3 Principal Components (Standardized Tagged Users)",
-            additional_stop_words=more_sw,
+            data=X_tfidf,
+            targets=data['airline_sentiment'],
+            title="Tweet Sentiment With 3 Principal Components (Std. Users, TF-IDF)",
             color_dict=color_dict,
             frame_path="images",
             outfilepath="images/pca_animation_no_users.gif"
         )
+
+    d2v = CustomDoc2Vec()
+    d2v_transformed = d2v.fit_transform(X_raw, data['airline_sentiment'])
+
+    create_pca_animation(
+        data=np.array(d2v_transformed),
+        targets=data['airline_sentiment'],
+        title="Tweet Sentiment With 3 Principal Components (Std. Users, Doc2Vec)",
+        color_dict=color_dict,
+        frame_path="images",
+        outfilepath="images/pca_animation_no_users_d2v.gif"
+    )

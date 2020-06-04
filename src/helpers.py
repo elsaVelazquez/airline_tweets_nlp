@@ -6,6 +6,7 @@ import re
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix
 import pandas as pd
+from nltk.stem import WordNetLemmatizer
 
 # stop words
 sw = [
@@ -16,19 +17,6 @@ sw = [
     'just', 'get', 'our', 'we', 'an', 'are', 'this',
     'but', 'will', 'fleek', 'im', 'if', 'it', 'u', 'or'
 ]
-
-# additional lemmatization terms
-additional_lemmatize_dict = {
-    "cancelled": "cancel",
-    "cancellation": "cancel",
-    "cancellations": "cancel",
-    "delays": "delay",
-    "delayed": "delay",
-    "baggage": "bag",
-    "bags": "bag",
-    "luggage": "bag",
-    "dms": "dm"
-}
 
 
 def print_model_metrics(y_test, y_preds):
@@ -61,12 +49,47 @@ def create_stop_words(additional_stopwords=None):
         return sk_stop_words
 
 
+def wordnet_lemmetize_tokenize(text):
+    '''
+    Custom tokenizer object that applies WordNetLemmatizer
+    Intended to be passed into CountVectorizer as a tokenizer object
+    '''
+    lemmatizer = WordNetLemmatizer()
+    words = text.split()
+
+    # additional lemmatization terms
+    additional_lemmatize_dict = {
+        "cancelled": "cancel",
+        "cancellation": "cancel",
+        "cancellations": "cancel",
+        "delays": "delay",
+        "delayed": "delay",
+        "baggage": "bag",
+        "bags": "bag",
+        "luggage": "bag",
+        "dms": "dm",
+        "thanks": "thank"
+    }
+    
+    tokens = []
+    for word in words:
+        if word not in sw:
+            if word in additional_lemmatize_dict:
+                clean_word = additional_lemmatize_dict[word]
+            else:
+                clean_word = lemmatizer.lemmatize(word)
+            tokens.append(clean_word)
+    return tokens
+
+
 def remove_punctuation(string, punc=punctuation):
     '''
     Remove all punctuation from a string
     '''
-    for character in punc:
-        string = string.replace(character, '')
+    punc = punc.replace("@", "").replace("#", "").replace("?", "").replace("!", "")
+    string = re.sub("&amp", "&", string)
+    string = re.sub(rf"[{punc}]", "", string)
+    string = re.sub(rf"\s\d+\s", " ", string)
     return string
 
 
@@ -99,6 +122,21 @@ def remove_line_breaks(string):
 
 def clean_whitespace(string):
     return re.sub(r"\s+", " ", string.strip())
+
+
+def pad_emojis(string):
+    # pad emojis and '?' and '!' with whitespace to turn them into their own tokens
+    emojis = re.compile(u'(['
+        '?!'
+        u'\U0001F300-\U0001F64F'
+        u'\U0001F680-\U0001F6FF'
+        u'\u2600-\u26FF\u2700-\u27BF])', 
+        re.UNICODE)
+
+    string = emojis.sub(r' \1 ', string)
+
+    string = re.sub(r"\s+", " ", string)
+    return string
 
 
 def clean_df_column(df, col):

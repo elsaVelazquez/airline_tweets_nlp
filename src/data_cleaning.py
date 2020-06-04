@@ -1,13 +1,16 @@
 import pandas as pd
 import numpy as np
 from itertools import chain
-from helpers import remove_hashtags, clean_whitespace
+from helpers import remove_hashtags, clean_whitespace, pad_emojis, remove_punctuation
 
 
-def data_cleaning(infile, outfile):
+def data_cleaning(infile, outfile=None):
     # Load data
-    df_raw = pd.read_csv(infile)
-    df_clean = df_raw.copy()
+    if outfile != None:
+        df_raw = pd.read_csv(infile)
+        df_clean = df_raw.copy()
+    else:
+        df_clean = pd.DataFrame({"text": [infile]})
 
     # make lowercase
     df_clean['text'] = df_clean['text'].str.lower()
@@ -35,8 +38,8 @@ def data_cleaning(infile, outfile):
     replace_char_dict = {
         "’": "'",
         "‘": "'",
-        "”": r"\"",
-        "“": r"\""
+        "”": "\"",
+        "“": "\""
     }
 
     for char in remove_char_list:
@@ -48,11 +51,16 @@ def data_cleaning(infile, outfile):
                                                     replace_char_dict[char]
                                                 )
 
+    df_clean['text'] = df_clean['text'].apply(remove_punctuation)
+    df_clean['text'] = df_clean['text'].apply(pad_emojis)
+
     # remove trailing/leading whitespace
     df_clean['text'] = df_clean['text'].apply(clean_whitespace)
-
-    df_clean.to_csv(outfile)
-    return
+    if outfile != None:
+        df_clean.to_csv(outfile)
+        return
+    else:
+        return df_clean['text'][0]
 
 
 if __name__ == "__main__":

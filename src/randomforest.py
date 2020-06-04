@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.pipeline import Pipeline
 from joblib import dump, load
-from helpers import sw, define_axis_style, plot_feature_importances, print_model_metrics
+from helpers import sw, define_axis_style, plot_feature_importances, print_model_metrics, wordnet_lemmetize_tokenize
 import os
 
 if __name__ == '__main__':
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=10)
 
     # Initialize Count Vectorizer and Random Forest pipeline
-    count_vect = CountVectorizer(stop_words=sw, analyzer='word')
+    count_vect = CountVectorizer(stop_words=sw, analyzer='word', tokenizer=wordnet_lemmetize_tokenize)
 
     rf = RandomForestClassifier(
                             random_state=42,
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     n_features = 15
     define_axis_style(
                     ax=ax,
-                    title=f"Top {n_features} Feature Importances for Random Forest",
+                    title=f"Top {n_features} Feature Importances for Random Forest (Bag of Words)",
                     x_label=None,
                     y_label='Feature Importance'
                 )

@@ -47,14 +47,19 @@ python3 src/pca_animation.py
 
 ## Create Models
 
-Create NaiveBayes Model:
+Create CV NaiveBayes Model:
 ```
 python3 src/naive_bayes.py
 ```
 
-Create RandomForest Model:
+Create TF-IDF trained RandomForest Model:
 ```
 python3 src/randomforest.py
+```
+
+Create Doc2Vec trained RandomForest Model:
+```
+python3 src/d2v_randomforest.py
 ```
 
 ## Evaluate Models

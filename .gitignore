@@ -4,6 +4,6 @@
 /notebooks
 /images/pca_anim
 __pycache__
-/models/*.joblib
+/models/*
 *.ipynb
 .DS_Store
