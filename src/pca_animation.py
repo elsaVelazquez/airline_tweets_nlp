@@ -6,12 +6,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-from helpers import create_stop_words
+from src.helpers import create_stop_words
 import os
 import imageio
 import glob
 
-from d2v_custom import CustomDoc2Vec
+from src.d2v_custom import CustomDoc2Vec
 
 
 def create_3d_scatter(ax, x, y, z, colors, title):

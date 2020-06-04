@@ -9,7 +9,7 @@ from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 import os
 import imageio
 import glob
-from helpers import create_stop_words, define_axis_style
+from src.helpers import create_stop_words, define_axis_style
 
 if __name__ == '__main__':
 

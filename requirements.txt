@@ -5,12 +5,9 @@ matplotlib
 joblib
 numpy
 pandas
-re
-os
 imageio
-glob
-string
-itertools
-PIL
 wordcloud
 statistics
+flask
+tabulate
+-e .

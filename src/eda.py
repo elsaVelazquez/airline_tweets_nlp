@@ -6,7 +6,7 @@ from PIL import Image
 from wordcloud import WordCloud, ImageColorGenerator
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
-from helpers import clean_df_column, define_axis_style, sw
+from src.helpers import clean_df_column, define_axis_style, sw
 
 
 def group_plot_pos_neg_dist(

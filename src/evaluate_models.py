@@ -4,11 +4,11 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score
 
-from data_cleaning import data_cleaning
-from identify_users_of_interest import remove_users_of_interest
-from helpers import print_model_metrics, wordnet_lemmetize_tokenize
-from vader_analysis import VaderAnalysis
-from d2v_custom import CustomDoc2Vec
+from src.data_cleaning import data_cleaning
+from src.identify_users_of_interest import remove_users_of_interest
+from src.helpers import print_model_metrics, wordnet_lemmetize_tokenize
+from src.vader_analysis import VaderAnalysis
+from src.d2v_custom import CustomDoc2Vec
 
 
 def ensemble_models_voting(rf_preds, nb_preds, vader_preds, d2v_rf_preds):

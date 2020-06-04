@@ -2,7 +2,7 @@ import pandas as pd
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import nltk
 import re
-from helpers import clean_df_column, print_model_metrics
+from src.helpers import clean_df_column, print_model_metrics
 
 
 def demo_vader(sentence):

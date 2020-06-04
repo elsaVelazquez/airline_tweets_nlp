@@ -7,7 +7,7 @@ from sklearn.pipeline import Pipeline
 import nltk
 from string import punctuation
 import numpy as np
-from helpers import (
+from src.helpers import (
             sw, remove_punctuation,
             plot_feature_importances,
             define_axis_style,

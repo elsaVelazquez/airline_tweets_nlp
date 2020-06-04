@@ -1,5 +1,5 @@
-from d2v_custom import CustomDoc2Vec
-from helpers import print_model_metrics
+from src.d2v_custom import CustomDoc2Vec
+from src.helpers import print_model_metrics
 
 import pandas as pd
 import numpy as np

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from itertools import chain
-from helpers import remove_hashtags, clean_whitespace, pad_emojis, remove_punctuation
+from src.helpers import remove_hashtags, clean_whitespace, pad_emojis, remove_punctuation
 
 
 def data_cleaning(infile, outfile=None):
