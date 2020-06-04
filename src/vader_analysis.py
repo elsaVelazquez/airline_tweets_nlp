@@ -17,7 +17,6 @@ def demo_vader(sentence):
 class VaderAnalysis():
     def __init__(self):
         self.analyser = SentimentIntensityAnalyzer()
-        nltk.download('vader_lexicon')
 
     def predict(self, X):
         y_preds = []

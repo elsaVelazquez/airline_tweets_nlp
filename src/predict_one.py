@@ -3,6 +3,7 @@ from statistics import mode, StatisticsError
 import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score
+import nltk
 
 from src.data_cleaning import data_cleaning
 from src.identify_users_of_interest import remove_users_of_interest
@@ -77,4 +78,6 @@ def predict_one(text):
         ])
 
 if __name__ == "__main__":
+    nltk.download('wordnet')
+    nltk.download('vader_lexicon')  
     print(predict_one("test"))
