@@ -25,7 +25,16 @@ def my_form_post():
     text = request.form['tweet']
     df = predict_one(text)
     html_df = df.to_html(classes='table table-hover')
-    return render_template('demo_predict.html', pred=df['Prediction']['Ensemble'],preds=html_df, tweet=text)
+
+    pred = df['Prediction']['Ensemble']
+    if pred == 'negative':
+        pred = "<span style='color: #8f2222'>" + pred + "</span>"
+    elif pred == 'positive':
+        pred = "<span style='color: #196e2a'>" + pred + "</span>"
+    elif pred == 'neutral':
+        pred = "<span style='color: #db9a00'>" + pred + "</span>"
+
+    return render_template('demo_predict.html', pred=pred, preds=html_df, tweet=text)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, threaded=True)
