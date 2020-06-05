@@ -350,7 +350,7 @@ I tried a few methods of combining these three models with varying success. The 
 Overall, I found the **probability** based system outperformed the voting system. By taking all of the predicted probabilities from all four of my models, applying some weights (weights were determined through brute force), taking the sum of the weighted probabilities, and finally predicting the class with the maximum probability.
 
 <center>
-  <img src="images/ensemble_proba_flowchart.jpg" alt="alt text" width="700">
+  <img src="images/ensemble_proba_flowchart.png" alt="alt text" width="700">
 </center>
 
 This ensemble model ended up being my top performing model, with an accuracy of `0.80` and an F1-Score of `0.76`.
