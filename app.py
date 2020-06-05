@@ -23,8 +23,9 @@ def demo():
 @app.route('/demo_predict', methods=['POST'])
 def my_form_post():
     text = request.form['tweet']
-    df = predict_one(text).to_html(classes='table table-hover')
-    return render_template('demo_predict.html', pred=df, tweet=text)
+    df = predict_one(text)
+    html_df = df.to_html(classes='table table-hover')
+    return render_template('demo_predict.html', pred=df['Prediction']['Ensemble'],preds=html_df, tweet=text)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, threaded=True)

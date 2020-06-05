@@ -57,9 +57,11 @@
     <div class="container">
 
       <div class="starter-template">
-        {{tweet}}
+        Tweet: {{tweet}}
+        <br>
+        Prediction: <b>{{pred}}</b>
         <br><br>
-        {{pred | safe}}
+        {{preds | safe}}
         <br><br>
         <form action="../demo">
           <input type="submit" value="Analyze another Tweet" />
