@@ -27,7 +27,7 @@ def ensemble_models_voting(rf_preds, nb_preds, vader_preds, d2v_rf_preds):
     return final_preds
 
 
-def ensemble_models_probas(rf_probas, nb_probas, vader_probas, d2v_rf_probas, weights=[1, 0.2, 0.2, 0.6]):
+def ensemble_models_probas(rf_probas, nb_probas, vader_probas, d2v_rf_probas, weights=[1, 0.2, 0.2, 1]):
     '''
     Assemble predictions in the form of probabilities
     from RandomForest, NaiveBayes, and VADER analysis.
@@ -144,7 +144,6 @@ if __name__ == '__main__':
                         rf_fmt_probas,
                         nb_fmt_probas,
                         y_probas_vader,
-                        d2v_rf_fmt_probas,
-                        weights=[1, 0.2, 0.2, 0.6]
+                        d2v_rf_fmt_probas
                     )
     print_model_metrics(y_holdout, y_preds_probas)
