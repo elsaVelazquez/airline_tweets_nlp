@@ -80,4 +80,4 @@ def predict_one(text):
 if __name__ == "__main__":
     nltk.download('wordnet')
     nltk.download('vader_lexicon')  
-    print(predict_one("@united thanks for the terrible service!"))
+    print(predict_one("@united thanks for the terrible service"))
