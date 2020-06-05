@@ -249,7 +249,7 @@ A **Continuous Bag of Words** approach is much more complex. It utilizes a word'
 
 In this simple example, we convert the word `"best"` to the vector `[-0.4, 1.2, 0.7, 1.1, -1.5] `. Unlike the traditional  bag of words approach, the vector resulting from a continuous bag of words contains information regarding a word's **context**.
 
-Below we can see the difference these two different types of text feautizing can make using the same principal component analysis as before.
+Below we can see the difference these two different types of text featurizing can make using the same principal component analysis as before.
 
 ![PCA2](images/pca_animation_no_users.gif "PCA2")
 ![PCA3](images/pca_animation_no_users_d2v.gif "PCA3")
