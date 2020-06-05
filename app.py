@@ -22,7 +22,7 @@ def demo():
 
 @app.route('/demo_predict', methods=['POST'])
 def my_form_post():
-    text = request.form['tweet']
+    text = "<p style='font-size:18px'>" + request.form['tweet'] + "</p>"
     df = predict_one(text)
     html_df = df.to_html(classes='table table-hover')
 
