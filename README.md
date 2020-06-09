@@ -24,7 +24,7 @@
       - [VADER Sentiment Analysis Confusion Matrix](#vader-sentiment-analysis-confusion-matrix)
     + [Model Assembly](#model-assembly)
     + [Final Results](#final-results)
-      - [Final Ensemble Model Confusion Matrix:](#final-ensemble-model-confusion-matrix-)
+      - [Final Ensemble Model Confusion Matrix:](#final-ensemble-model-confusion-matrix)
   * [Conclusions](#conclusions)
     + [Future Ideas](#future-ideas)
     + [Sources](#sources)

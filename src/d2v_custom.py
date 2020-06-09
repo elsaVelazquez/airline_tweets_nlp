@@ -7,6 +7,13 @@ import numpy as np
 
 
 class CustomDoc2Vec(BaseEstimator):
+    '''
+    Wrapper for gensim Doc2Vec for use in SKLearn pipeline
+
+    ginsem has this functionality built in (see: https://radimrehurek.com/gensim/sklearn_api/d2vmodel.html)
+
+    This custom class exists due to some inconsistencies in the built-in SKLearn wrapper
+    '''
     def __init__(
                 self,
                 seed=123,
