@@ -31,7 +31,7 @@
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 # Airline Tweet Sentiment Analysis and Classification (NLP)
-This project uses a combination of supervised and unsupervised models in order to predict tweet sentiment. For the purposes of this project, sentiment is classified as either `positive`, `negative`, or `neutral`.
+This project uses a combination of supervised and rules-based models in order to predict tweet sentiment. For the purposes of this project, sentiment is classified as either `positive`, `negative`, or `neutral`.
 
 Throughout this document, we will refer to two things found commonly in social media text data, `tags` and `hashtags`.
 
@@ -319,7 +319,7 @@ This model had an accuracy of `0.78` and an F1-Score of `0.73` against the holdo
 
 ### VADER Sentiment Analysis
 
-VADER Sentiment Analysis was the only unsupervised technique I used in my modelling. VADER is a complicated algorithm that is able to derive sentiment from sentence structure, punctuation, emojis, and much more.
+VADER Sentiment Analysis was the only rules-based technique I used in my modelling. VADER is a complicated algorithm that is able to derive sentiment from sentence structure, punctuation, emojis, and much more.
 
 Essentially, if you give it a sentence, it will return a score associated with a positive sentiment, neutral sentiment, and negative sentiment. Luckily these are the same classes we are attempting to predict!
 
