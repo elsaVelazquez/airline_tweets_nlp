@@ -204,7 +204,7 @@ It is worth noting that three principal components only accounts for a small pro
 In order to account for 80% of the variance in the data, we'd need ~600 principal components. This ruled out using these principal components as features for predictions
 
 ## Text Processing
-To properly featurize the tweet data before attempting to fit any models, I used TF-IDF transformers and a CountVectorizer with a custom lemmatizer. This lemmatizer was a combination of WordNet from SKLearn and a custom dictionary built to handle words specific to this dataset.
+To vecotize the tweet data before attempting to fit any models, I used a TF-IDF, CountVectorizer, and a Doc2Vec transofrmation with a custom lemmatizer. This lemmatizer was a combination of WordNet from SKLearn and a custom dictionary built to handle words specific to this dataset.
 
 ```python3
 additional_lemmatize_dict = {
