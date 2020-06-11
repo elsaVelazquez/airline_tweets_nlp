@@ -1,6 +1,6 @@
 ![Banner](images/airplane_banner.jpg "Banner")
 <div style="text-align: right"> Photo Courtesy of Ross Parmly </div>
-
+<br>
 [If you are looking for the demo of this project, click here!](ec2-18-216-91-220.us-east-2.compute.amazonaws.com)
 
 # Table of Contents
