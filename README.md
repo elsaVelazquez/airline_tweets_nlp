@@ -50,8 +50,10 @@ Ex.
 "This flight is still hasn't taken off!! #imsobored"
 ```
 
-## Goal
-The goal of this project is to develop a model that can correctly predict the sentiment of a tweet aimed at an airline, with the specific goal of identifying negative tweets. A company could use this model to develop a program that automatically responds to negative tweets, directs customers to the appropriate department, or possibly sends these customers a promotion/discount before they result in negative PR or customer churn.
+## Goals
+1. Develop a model that can correctly predict the sentiment of a tweet aimed at an airline, with the specific goal of identifying negative tweets. A company could use this model to develop a program that automatically responds to negative tweets, directs customers to the appropriate department, or possibly sends these customers a promotion/discount before they result in negative PR or churn.
+
+1. Compare the performance of pre-built rules-based sentiment classifiers with a model trained on tweets specific to a particular industry.
 
 ## Raw Data
 
