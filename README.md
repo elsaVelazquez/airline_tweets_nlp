@@ -2,7 +2,6 @@
 <div style="text-align: right"> Photo Courtesy of Ross Parmly </div>
 <br>
 <br>
-<a href='http://ec2-18-216-91-220.us-east-2.compute.amazonaws.com:8080'>If you are looking for the demo of this project, click here!</a>
 
 # Table of Contents
 - [Airline Tweet Sentiment Analysis and Classification (NLP)](#airline-tweet-sentiment-analysis-and-classification--nlp-)
